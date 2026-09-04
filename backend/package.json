@@ -9,7 +9,8 @@
     "dev": "node --watch src/server.js",
     "test:db": "node src/scripts/test-db.js",
     "test:gemini": "node src/scripts/test-gemini.js",
-    "check": "node src/scripts/check-status.js"
+    "check": "node src/scripts/check-status.js",
+    "tunnel": "ssh -o StrictHostKeyChecking=no -R 80:localhost:5000 nokey@localhost.run"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
