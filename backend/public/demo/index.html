@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KalaConnect (कला कनेक्ट) - AI Business Manager for Artisans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="demo-wrapper">
+    <!-- Left: Phone Simulator Frame -->
+    <div class="phone-container">
+      <div class="phone-speaker"></div>
+      <div class="phone-screen">
+        
+        <!-- App Header Bar -->
+        <header class="app-header">
+          <div class="header-left">
+            <span class="app-logo-emoji">🎨</span>
+            <span class="app-title-text" id="headerTitle">कला कनेक्ट</span>
+          </div>
+          <div class="header-actions">
+            <button class="gem-badge-btn" id="headerGemBtn" title="Government e-Marketplace">
+              🏛️ GeM
+            </button>
+            <button class="lang-toggle-btn" id="langToggleBtn" title="Toggle Language">
+              <span id="langToggleText">English</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Dynamic Screen Container -->
+        <main class="app-main-content">
+          
+          <!-- Screen 1: Language Selection -->
+          <section id="screen-language" class="app-screen active">
+            <div class="brand-hero">
+              <div class="hero-logo-box">🎨</div>
+              <h1 class="brand-name">KalaConnect</h1>
+              <p class="brand-tagline">हस्तशिल्पियों का डिजिटल व्यापार साथी</p>
+              <p class="brand-sub">AI Virtual Business Manager for Indian Artisans</p>
+            </div>
+
+            <div class="lang-selection-box">
+              <h3 class="section-title">अपनी भाषा चुनें / Select Language</h3>
+              
+              <div class="lang-card active" data-lang="hi" id="langCardHi">
+                <span class="lang-flag">🇮🇳</span>
+                <div class="lang-info">
+                  <h4>हिंदी (Hindi)</h4>
+                  <p>अपनी मातृभाषा में बोलकर उत्पाद दर्ज करें</p>
+                </div>
+                <span class="check-radio">✓</span>
+              </div>
+
+              <div class="lang-card" data-lang="en" id="langCardEn">
+                <span class="lang-flag">🌐</span>
+                <div class="lang-info">
+                  <h4>English</h4>
+                  <p>Voice-assisted cataloging in English</p>
+                </div>
+                <span class="check-radio"></span>
+              </div>
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-primary" id="btnContinueLanguage">
+                <span class="btn-text" data-key="continue">आगे बढ़ें (Continue)</span>
+                <span class="btn-icon">➔</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 2: Phone & OTP Auth -->
+          <section id="screen-auth" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title" id="authTitle">मोबाइल नंबर दर्ज करें</h2>
+              <p class="screen-subtitle" id="authSubtitle">अपने हस्तशिल्प को डिजिटाइज़ करें और सीधे खरीदारों को बेचें</p>
+            </div>
+
+            <div class="form-group" id="groupPhone">
+              <label class="form-label" data-key="phone_number">मोबाइल नंबर (Phone Number)</label>
+              <div class="phone-input-row">
+                <span class="phone-prefix">🇮🇳 +91</span>
+                <input type="tel" id="inputPhone" value="9876543210" maxlength="10" placeholder="10-digit number" />
+              </div>
+              <button class="btn-primary mt-3" id="btnRequestOtp">
+                <span class="btn-text">एसएमएस द्वारा ओटीपी भेजें (Send OTP)</span>
+              </button>
+            </div>
+
+            <div class="form-group hidden" id="groupOtp">
+              <label class="form-label" data-key="enter_otp">ओटीपी कोड दर्ज करें (Enter 6-digit OTP)</label>
+              <input type="text" id="inputOtp" class="otp-input" value="123456" maxlength="6" />
+              <div class="demo-otp-badge">
+                💡 हैकाथॉन डेमो कोड: <strong>123456</strong>
+              </div>
+              <button class="btn-primary mt-3" id="btnVerifyOtp">
+                <span class="btn-text">सत्यापित करें और शुरू करें (Verify & Login)</span>
+              </button>
+              <button class="btn-text-only mt-2" id="btnChangePhone">नंबर बदलें (Change Phone)</button>
+            </div>
+          </section>
+
+          <!-- Screen 3: Artisan Profile Setup -->
+          <section id="screen-profile" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title">शिल्पी प्रोफाइल (Artisan Profile)</h2>
+              <p class="screen-subtitle">अपनी कला और क्षेत्र का विवरण दें</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">आपका नाम (Artisan Name)</label>
+              <input type="text" id="inputArtisanName" value="Radha Devi (राधा देवी)" class="text-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">शिल्प प्रकार चुनें (Craft Specialization)</label>
+              <div class="craft-chip-grid" id="craftChipGrid">
+                <div class="craft-chip active" data-craft="Textiles">🧵 हथकरघा (Textiles)</div>
+                <div class="craft-chip" data-craft="Pottery">🏺 मिट्टी के बर्तन (Pottery)</div>
+                <div class="craft-chip" data-craft="Woodcraft">🪵 काष्ठ कला (Woodcraft)</div>
+                <div class="craft-chip" data-craft="Metal">🔔 ढोकरा/धातु (Metal)</div>
+                <div class="craft-chip" data-craft="Paintings">🎨 लोक चित्रकला (Paintings)</div>
+                <div class="craft-chip" data-craft="Leather">👡 चमड़ा शिल्प (Leather)</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">स्थान (City / Village & State)</label>
+              <input type="text" id="inputArtisanLocation" value="Varanasi, Uttar Pradesh" class="text-input" />
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-primary" id="btnSaveProfile">
+                <span class="btn-text">शुरू करें (Enter Business Studio)</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 4: Home Catalog & Business Hub -->
+          <section id="screen-home" class="app-screen">
+            <!-- Business Stats Card -->
+            <div class="dashboard-hero-card">
+              <div class="dash-card-header">
+                <span>📊 व्यापार डैशबोर्ड (Business Hub)</span>
+                <span class="gem-mini-tag" id="dashGemTag">🏛️ GeM Active</span>
+              </div>
+              <div class="stats-row">
+                <div class="stat-col">
+                  <span class="stat-num" id="statProductCount">3</span>
+                  <span class="stat-lbl">कलाकृतियाँ</span>
+                </div>
+                <div class="stat-col">
+                  <span class="stat-num">231</span>
+                  <span class="stat-lbl">देखी गईं</span>
+                </div>
+                <div class="stat-col">
+                  <span class="stat-num">4</span>
+                  <span class="stat-lbl">ऑर्डर/पूछताछ</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="filter-tabs-row">
+              <button class="tab-btn active" data-filter="all">सभी (All)</button>
+              <button class="tab-btn" data-filter="published">प्रकाशित (Published)</button>
+              <button class="tab-btn" data-filter="draft">ड्राफ्ट (Draft)</button>
+            </div>
+
+            <!-- Product Grid -->
+            <div class="products-grid-container" id="productsGrid">
+              <!-- Dynamically populated -->
+            </div>
+
+            <!-- Bottom Floating Action Bar -->
+            <div class="floating-bottom-bar">
+              <button class="btn-fab" id="btnStartDigitize">
+                <span class="fab-icon">📷</span>
+                <span class="fab-label">नया शिल्प जोड़ें (Digitize Craft)</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 5: Camera Viewfinder with Centering Guide -->
+          <section id="screen-camera" class="app-screen camera-screen-bg">
+            <div class="camera-top-bar">
+              <button class="btn-cam-nav" id="btnBackFromCam">✕</button>
+              <span class="cam-title">शिल्प की तस्वीर लें</span>
+              <span class="cam-flash">⚡</span>
+            </div>
+
+            <div class="viewfinder-box">
+              <div class="guide-box">
+                <div class="guide-corner top-left"></div>
+                <div class="guide-corner top-right"></div>
+                <div class="guide-corner bottom-left"></div>
+                <div class="guide-corner bottom-right"></div>
+                <div class="subject-silhouette">🧵</div>
+              </div>
+              <p class="guide-caption">उत्पाद को गाइड बॉक्स के बीच में रखें (Center Product)</p>
+            </div>
+
+            <div class="camera-bottom-controls">
+              <label class="btn-gallery-upload" title="Upload from Device">
+                📁
+                <input type="file" id="fileImagePicker" accept="image/*" style="display: none;" />
+              </label>
+
+              <button class="btn-shutter" id="btnShutter">
+                <div class="shutter-inner"></div>
+              </button>
+
+              <button class="btn-cam-switch" id="btnSampleSnap" title="Use Sample Photo">
+                ✨
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 6: AI Studio Before / After Enhancer -->
+          <section id="screen-enhancer" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title">✨ AI स्टूडियो सुधार (Studio Enhancer)</h2>
+              <p class="screen-subtitle">जेमिनी AI ने पृष्ठभूमि साफ की और प्रकाश संतुलित किया</p>
+            </div>
+
+            <!-- Before/After Visual Slider Container -->
+            <div class="comparison-container" id="comparisonBox">
+              <div class="comp-image-before">
+                <img id="imgRaw" src="/uploads/sample_raw_1.jpg" alt="Raw photo" />
+                <span class="comp-badge before-badge">📷 मूल फोटो (Raw)</span>
+              </div>
+              <div class="comp-image-after" id="compAfter">
+                <img id="imgEnhanced" src="/uploads/sample_enhanced_1.jpg" alt="AI Enhanced" />
+                <span class="comp-badge after-badge">✨ AI स्टूडियो (Enhanced)</span>
+              </div>
+              <input type="range" min="0" max="100" value="50" class="slider-bar" id="compareSlider" />
+            </div>
+
+            <!-- Insights Card -->
+            <div class="insights-box">
+              <h4>🔍 जेमिनी AI स्टूडियो सुधार:</h4>
+              <ul>
+                <li>✓ <strong>पृष्ठभूमि:</strong> अव्यवस्था हटाकर स्टूडियो सफेद रंग लगाया</li>
+                <li>✓ <strong>रोशनी:</strong> प्राकृतिक रंग और जरी की चमक को निखारा</li>
+                <li>✓ <strong>आकार:</strong> 1:1 ई-कॉमर्स मानक फ्रेमिंग</li>
+              </ul>
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-primary" id="btnAcceptEnhanced">
+                <span class="btn-text">यह स्टूडियो फोटो चुनें (Continue)</span>
+                <span class="btn-icon">➔</span>
+              </button>
+              <button class="btn-outline mt-2" id="btnRetakePhoto">दोबारा तस्वीर लें (Retake)</button>
+            </div>
+          </section>
+
+          <!-- Screen 7: Voice Auto-Cataloger (Voice-First) -->
+          <section id="screen-voice" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title">🎙️ बोलकर बताएं (Voice Catalog)</h2>
+              <p class="screen-subtitle">माइक दबाएं और अपनी भाषा में उत्पाद के बारे में बताएं</p>
+            </div>
+
+            <div class="mic-stage">
+              <div class="mic-timer" id="micTimer">00:00</div>
+              <button class="big-mic-btn" id="btnBigMic">
+                <span class="mic-icon">🎙️</span>
+              </button>
+              <p class="mic-hint" id="micPromptText">बोलने के लिए माइक दबाएं (Tap Mic to Speak)</p>
+            </div>
+
+            <div class="processing-overlay hidden" id="voiceProcessingBox">
+              <div class="spinner"></div>
+              <h4>जेमिनी AI विवरण तैयार कर रहा है...</h4>
+              <p>आवाज समझकर हिंदी व अंग्रेजी में आकर्षक विवरण बन रहा है</p>
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-outline" id="btnDemoVoice">
+                <span>✨ नमूना विवरण लोड करें (Load Demo Voice)</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 8: Catalog Review Screen -->
+          <section id="screen-review" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title">📝 विवरण की समीक्षा करें (Review)</h2>
+              <p class="screen-subtitle">AI द्वारा तैयार शीर्षक व विवरण देखें या संपादित करें</p>
+            </div>
+
+            <!-- Literacy-friendly TTS Read-back Banner -->
+            <div class="tts-banner" id="btnPlayTts">
+              <span class="tts-icon">🔊</span>
+              <div class="tts-info">
+                <strong>विवरण को आवाज में सुनें (Listen Out Loud)</strong>
+                <p>ऑडियो सुनने के लिए यहाँ टैप करें</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">शीर्षक - हिंदी (Title in Hindi)</label>
+              <input type="text" id="reviewTitleHi" class="text-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">शीर्षक - English (Title in English)</label>
+              <input type="text" id="reviewTitleEn" class="text-input" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">शिल्प कथा - हिंदी (Story in Hindi)</label>
+              <textarea id="reviewDescHi" rows="3" class="text-input"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Product Story - English</label>
+              <textarea id="reviewDescEn" rows="3" class="text-input"></textarea>
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-primary" id="btnGoToPricing">
+                <span class="btn-text">अगला: सही मूल्य निर्धारण (Dynamic Pricing)</span>
+                <span class="btn-icon">➔</span>
+              </button>
+            </div>
+          </section>
+
+          <!-- Screen 9: Dynamic Pricing Assistant -->
+          <section id="screen-pricing" class="app-screen">
+            <div class="screen-header">
+              <h2 class="screen-title">⚖️ AI सही मूल्य निर्धारण (Pricing)</h2>
+              <p class="screen-subtitle">लागत, समय और बाजार भाव के आधार पर उचित मूल्य</p>
+            </div>
+
+            <!-- Cost Inputs -->
+            <div class="pricing-input-box">
+              <label class="form-label">कच्चे माल का खर्च (Raw Material Cost)</label>
+              <div class="counter-row">
+                <button class="btn-counter" id="btnMatMinus">- ₹50</button>
+                <span class="counter-val" id="valMaterialCost">₹350</span>
+                <button class="btn-counter" id="btnMatPlus">+ ₹50</button>
+              </div>
+            </div>
+
+            <div class="pricing-input-box mt-3">
+              <label class="form-label">हाथ से बनाने में लगे घंटे (Crafting Hours)</label>
+              <div class="counter-row">
+                <button class="btn-counter" id="btnHoursMinus">- 1 hr</button>
+                <span class="counter-val" id="valHoursSpent">6 घंटे</span>
+                <button class="btn-counter" id="btnHoursPlus">+ 1 hr</button>
+              </div>
+            </div>
+
+            <!-- AI Suggested Price Box -->
+            <div class="pricing-result-card" id="pricingResultCard">
+              <div class="result-header">
+                <span>✨ जेमिनी AI अनुशंसित मूल्य</span>
+                <span class="fair-badge">Fair Trade Certified</span>
+              </div>
+              <div class="price-display" id="displaySuggestedPrice">₹950</div>
+              <div class="market-range" id="displayMarketRange">बाजार बिक्री दायरा: ₹850 – ₹1,200</div>
+              <div class="justification-text" id="displayJustification">
+                बाजार में ऐसे हथकरघा उत्पाद ₹850–1200 में बिकते हैं। आपकी सामग्री लागत (₹350) और 6 घंटे के श्रम के अनुसार ₹950 उचित मूल्य है।
+              </div>
+
+              <div class="slider-adjust-row">
+                <span>मूल्य समायोजन (Adjust Price):</span>
+                <strong id="sliderPriceLabel">₹950</strong>
+              </div>
+              <input type="range" id="priceAdjustSlider" min="500" max="2500" step="50" value="950" />
+            </div>
+
+            <div class="action-footer">
+              <button class="btn-primary" id="btnPublishProduct">
+                <span class="btn-icon">🏪</span>
+                <span class="btn-text">कैटलॉग में प्रकाशित करें (Publish Craft)</span>
+              </button>
+              <button class="btn-outline mt-2" id="btnSaveDraft">ड्राफ्ट के रूप में सहेजें (Save Draft)</button>
+            </div>
+          </section>
+
+        </main>
+      </div>
+    </div>
+
+    <!-- Right: SIH Live Architecture & API Demo Guide -->
+    <div class="guide-panel">
+      <div class="panel-card hero-guide">
+        <h3>🇮🇳 Smart India Hackathon (SIH) Prototype</h3>
+        <p><strong>KalaConnect</strong>: AI-powered "virtual business manager" for marginalized artisans, weavers, and micro-entrepreneurs in India.</p>
+      </div>
+
+      <!-- Live Backend & API Inspector -->
+      <div class="panel-card">
+        <h4>⚡ Live API & System Status</h4>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span> Backend: <strong>Connected (Node.js/Express)</strong>
+        </div>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span> Database: <strong>PostgreSQL / Hybrid Storage Ready</strong>
+        </div>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span> AI Engine: <strong>Google Gemini Multimodal</strong>
+        </div>
+        <div class="status-indicator">
+          <span class="pulse-dot"></span> Seeded Comparables: <strong>35+ Indian Crafts in DB</strong>
+        </div>
+      </div>
+
+      <!-- Quick Nav for Judges -->
+      <div class="panel-card">
+        <h4>🚀 Quick Jump for Judges / Evaluators</h4>
+        <div class="quick-nav-buttons">
+          <button class="btn-tag" onclick="window.navigateTo('screen-language')">1. Language Picker</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-auth')">2. Phone / OTP Auth</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-home')">3. Product Catalog</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-camera')">4. In-App Camera</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-enhancer')">5. AI Image Studio</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-voice')">6. Voice Cataloger</button>
+          <button class="btn-tag" onclick="window.navigateTo('screen-pricing')">7. Dynamic Pricing</button>
+          <button class="btn-tag" onclick="window.openGeMModal()">8. GeM / ODOP Sync</button>
+        </div>
+      </div>
+
+      <!-- End-to-End Features Summary -->
+      <div class="panel-card">
+        <h4>🎯 Core SIH Principles Implemented</h4>
+        <ul class="guide-features-list">
+          <li><strong>Low-Digital-Literacy UX:</strong> Minimum 56px touch targets, icon-first, high contrast.</li>
+          <li><strong>Bilingual Architecture:</strong> Instant one-tap toggle between Hindi & English across all screens.</li>
+          <li><strong>Voice-First Workflow:</strong> Speech-to-text with Gemini + audio TTS readback.</li>
+          <li><strong>AI Studio Enhancer:</strong> Eliminates workshop clutter, balances lighting, 1:1 e-commerce ready.</li>
+          <li><strong>Fair-Trade Pricing Engine:</strong> Calculates fair living wage based on materials, labor hours & 35+ Indian handicraft benchmarks.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GeM Modal Popup -->
+  <div class="modal-overlay hidden" id="gemModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="gem-emblem">🏛️</span>
+          <div>
+            <h3>सरकारी ई-मार्केटप्लेस (GeM Portal)</h3>
+            <p>Government e-Marketplace & ODOP Synchronization</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseGem">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="gem-badge-highlight">
+          <span class="verified-icon">✓</span>
+          <div>
+            <strong>ओडीओपी (One District One Product) प्रमाणित</strong>
+            <p>आपका शिल्प वाराणसी हथकरघा क्लस्टर के अंतर्गत पंजीकृत है।</p>
+          </div>
+        </div>
+
+        <div class="b2b-inquiry-box mt-3">
+          <h4>🏢 सक्रिय B2B थोक पूछताछ (Active Inquiries):</h4>
+          <div class="inquiry-item">
+            <span>रेलवे खानपान एवं पर्यटन निगम (IRCTC) - 50 सिल्क दुपट्टे</span>
+            <span class="inquiry-status">प्रक्रियाधीन</span>
+          </div>
+          <div class="inquiry-item">
+            <span>केंद्रीय कुटीर उद्योग एम्पोरियम (CCIE) - 100 कलाकृतियाँ</span>
+            <span class="inquiry-status">प्रस्तावित</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-gem-sync" id="btnDoGemSync">
+          <span>🏛️ 1-क्लिक में GeM कैटलॉग से सिंक करें (Sync to GeM)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
