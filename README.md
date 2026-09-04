@@ -3,8 +3,13 @@
 
 kalaSetu empowers traditional rural Indian artisans with artificial intelligence tools:
 - 📸 **AI Studio Image Enhancer**: Cleans raw product photography, corrects lighting, and frames items into e-commerce 1:1 catalog assets.
+- 🖼️ **Traditional Art & Wall Visualizer**: Realistic AR/wall preview allowing buyers to visualize traditional folk paintings (Madhubani, Warli, Pattachitra) in modern living rooms, complete with dynamic frames.
+- 📜 **Cryptographic Certificate of Authenticity (COA)**: Generates verifiable artisan provenance certificates with GI tags, materials breakdown, and signature seals to prevent counterfeit crafts.
+- 🏺 **Multi-Craft Heritage Catalog**: Dedicated presets and categories for Terracotta Pottery (Mitti ke Bartan, Kulhads), Handwoven River Grass Mats (Madur Kathi), Bamboo Cottage Baskets, Heritage Textiles, and Dokra Metalcraft.
 - 🎙️ **Multilingual Voice Auto-Cataloger**: Transcribes artisan voice descriptions in regional languages (Hindi, English) and generates SEO product titles, tags, and stories.
 - ⚖️ **Fair-Trade Dynamic Pricing Assistant**: Combines raw material costs, crafting labor hours, and economic benchmarks to compute sustainable livelihood pricing.
+- 💬 **1-Click WhatsApp Artisan Showcase**: Instant deep-linked social commerce sharing with pre-formatted artisan stories, fair prices, and direct verification links.
+- 🌐 **Full English / Hindi Localization**: 100% bilingual UI with seamless live toggle between English and शुद्ध हिंदी.
 - 🐘 **PostgreSQL Cloud & Local Storage**: Enterprise-ready relational database with automated schema migrations and instant zero-config fallback.
 
 ---
@@ -119,6 +124,25 @@ flutter run
 
 ---
 
+## 🎯 5-Step Presentation & Demo Guide (For Judges)
+
+1. **Language & Onboarding**:
+   - Open `http://localhost:5000/demo`.
+   - Click the **"हिंदी / EN"** button in the header to show instant bilingual localization for rural artisans.
+2. **One-Tap Craft Quick Select**:
+   - Click any chip (**🏺 Clay Pot**, **☕ Clay Kulhad**, **🌾 Grass Mat**, **🧺 Cottage Basket**, or **🎨 Madhubani Painting**).
+   - Show how the image, title, craft heritage, and pricing automatically populate.
+3. **AI Studio Image Enhancement**:
+   - Click **"✨ AI Studio Enhance Image"** to demonstrate automatic background cleanup, dynamic lighting, and marketplace framing.
+4. **Art Painting Visualizer & Certificate (COA)**:
+   - For paintings, tap **"🖼️ Preview on Living Room Wall"** to showcase AR scale simulation.
+   - Tap **"📜 View Authenticity Certificate"** to showcase GI protection, artisan signature, and anti-counterfeit QR code.
+5. **Fair-Trade Pricing & 1-Click WhatsApp Commerce**:
+   - Move to Screen 9 to view the fair pricing breakdown (Raw Materials + Labor + GI Craft Premium).
+   - Click **"💬 Share Catalog on WhatsApp"** to generate instant social commerce leads.
+
+---
+
 ## 🛡️ Security & Git Best Practices
-- `.env` files are tracked in `.gitignore` and untracked from Git history.
-- Uploaded media and node_modules are excluded from the git repository.
+- `.env` files are protected by `.gitignore` and never committed to Git.
+- Uploaded media and node_modules are excluded from the repository.
