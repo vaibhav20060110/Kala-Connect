@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 async function startServer() {
   try {
     console.log('========================================================');
-    console.log('  KalaConnect (हस्तशिल्प व्यापार साथी) - Backend API');
+    console.log('  kalaSetu (हस्तशिल्प व्यापार साथी) - Backend API');
     console.log('========================================================');
 
     await initDatabase();
@@ -22,7 +22,7 @@ async function startServer() {
       console.log('========================================================');
     });
   } catch (err) {
-    console.error('[FATAL] Failed to start KalaConnect backend:', err);
+    console.error('[FATAL] Failed to start kalaSetu backend:', err);
     process.exit(1);
   }
 }

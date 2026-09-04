@@ -2,11 +2,15 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import pg from 'pg';
+import { Pool as NeonPool, neonConfig } from '@neondatabase/serverless';
+import ws from 'ws';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { Pool } = pg;
+// Configure WebSocket constructor for Neon (connects over port 443 to bypass port 5432 firewall blocks)
+neonConfig.webSocketConstructor = ws;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -67,16 +71,21 @@ function loadSeedsIntoMemory() {
   }
 }
 
-function getPoolConfig(connectionString) {
+function createDatabasePool(connectionString) {
+  const isNeon = connectionString.includes('neon.tech');
+  if (isNeon) {
+    return new NeonPool({ connectionString });
+  }
+
   const isLocal = connectionString.includes('localhost') ||
                   connectionString.includes('127.0.0.1') ||
                   connectionString.includes('host.docker.internal');
 
-  return {
+  return new pg.Pool({
     connectionString,
     ssl: isLocal ? false : { rejectUnauthorized: false },
     connectionTimeoutMillis: 10000
-  };
+  });
 }
 
 async function seedPostgresDemoData(client) {
@@ -110,6 +119,40 @@ async function seedPostgresDemoData(client) {
         'Traditional lead-free blue pottery vase with Persian cobalt floral designs.',
         'पारंपरिक नीली मिट्टी का फूलदान, हस्तनिर्मित फारसी कोबाल्ट फूलों की कलाकृति।',
         '/uploads/sample_raw_2.jpg', '/uploads/sample_enhanced_2.jpg', NULL, 1150.00, 'Pottery', 380.00, 8.0, 'published', 89
+      ),
+      (
+        'prod-painting-01', 'artisan-demo-01', 'Mithila Tree of Life (Madhubani Folk Painting on Canvas)', 'मिथिला जीवन वृक्ष (पारंपरिक मधुबनी लोक चित्रकला)',
+        'Hand-painted with fine bamboo twigs and natural mineral pigments on organic khadi canvas. Portrays the sacred Tree of Life and Matsya symbols of abundance.',
+        'प्राकृतिक वानस्पतिक रंगों व बारीक बांस की तीली से खादी कैनवास पर निर्मित। जीवन वृक्ष व मत्स्य समृद्धि के प्रतीक।',
+        '/uploads/sample_painting_raw.jpg', '/uploads/sample_painting_enhanced.jpg', NULL, 3450.00, 'Paintings', 650.00, 18.0, 'published', 142
+      ),
+      (
+        'prod-painting-02', 'artisan-demo-01', 'Warli Village Harvest Celebration (Tarpa Dance)', 'वारली ग्राम कटाई उत्सव (पारंपरिक तारपा नृत्य)',
+        'Authentic tribal art from Maharashtra hand-painted with white rice paste on earthy terracotta mud-cloth depicting community joy and nature harmony.',
+        'महाराष्ट्र की पारंपरिक आदिवासी कला, लाल गेरू की पृष्ठभूमि पर चावल के लेप से उकेरा गया।',
+        '/uploads/sample_painting_warli.jpg', '/uploads/sample_painting_warli.jpg', NULL, 2200.00, 'Paintings', 420.00, 12.0, 'published', 98
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `);
+  } else {
+    // Ensure paintings are inserted even if default crafts already exist
+    await client.query(`
+      INSERT INTO products (
+        id, artisan_id, title_en, title_hi, description_en, description_hi,
+        raw_image_url, enhanced_image_url, audio_notes_url, price, category,
+        material_cost, hours_spent, status, views
+      ) VALUES 
+      (
+        'prod-painting-01', 'artisan-demo-01', 'Mithila Tree of Life (Madhubani Folk Painting on Canvas)', 'मिथिला जीवन वृक्ष (पारंपरिक मधुबनी लोक चित्रकला)',
+        'Hand-painted with fine bamboo twigs and natural mineral pigments on organic khadi canvas. Portrays the sacred Tree of Life and Matsya symbols of abundance.',
+        'प्राकृतिक वानस्पतिक रंगों व बारीक बांस की तीली से खादी कैनवास पर निर्मित। जीवन वृक्ष व मत्स्य समृद्धि के प्रतीक।',
+        '/uploads/sample_painting_raw.jpg', '/uploads/sample_painting_enhanced.jpg', NULL, 3450.00, 'Paintings', 650.00, 18.0, 'published', 142
+      ),
+      (
+        'prod-painting-02', 'artisan-demo-01', 'Warli Village Harvest Celebration (Tarpa Dance)', 'वारली ग्राम कटाई उत्सव (पारंपरिक तारपा नृत्य)',
+        'Authentic tribal art from Maharashtra hand-painted with white rice paste on earthy terracotta mud-cloth depicting community joy and nature harmony.',
+        'महाराष्ट्र की पारंपरिक आदिवासी कला, लाल गेरू की पृष्ठभूमि पर चावल के लेप से उकेरा गया।',
+        '/uploads/sample_painting_warli.jpg', '/uploads/sample_painting_warli.jpg', NULL, 2200.00, 'Paintings', 420.00, 12.0, 'published', 98
       )
       ON CONFLICT (id) DO NOTHING;
     `);
@@ -121,7 +164,7 @@ export async function initDatabase() {
     try {
       const maskedUrl = databaseUrl.replace(/:[^:@]+@/, ':****@');
       console.log(`[DB] Connecting to PostgreSQL at: ${maskedUrl}`);
-      pool = new Pool(getPoolConfig(databaseUrl));
+      pool = createDatabasePool(databaseUrl);
       const client = await pool.connect();
       console.log('[DB] Connected successfully to PostgreSQL database.');
 

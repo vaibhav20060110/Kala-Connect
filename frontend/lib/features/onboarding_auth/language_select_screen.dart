@@ -46,7 +46,7 @@ class LanguageSelectScreen extends StatelessWidget {
               const SizedBox(height: 24),
               const Center(
                 child: Text(
-                  'KalaConnect',
+                  'kalaSetu',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,

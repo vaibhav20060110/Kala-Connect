@@ -1,4 +1,4 @@
--- KalaConnect PostgreSQL Database Schema
+-- kalaSetu PostgreSQL Database Schema
 
 CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,

@@ -1,7 +1,7 @@
-# KalaConnect (हस्तशिल्प व्यापार साथी)
+# kalaSetu (हस्तशिल्प व्यापार साथी)
 ### AI-Powered Virtual Business Manager for Indian Artisans
 
-KalaConnect empowers traditional rural Indian artisans with artificial intelligence tools:
+kalaSetu empowers traditional rural Indian artisans with artificial intelligence tools:
 - 📸 **AI Studio Image Enhancer**: Cleans raw product photography, corrects lighting, and frames items into e-commerce 1:1 catalog assets.
 - 🎙️ **Multilingual Voice Auto-Cataloger**: Transcribes artisan voice descriptions in regional languages (Hindi, English) and generates SEO product titles, tags, and stories.
 - ⚖️ **Fair-Trade Dynamic Pricing Assistant**: Combines raw material costs, crafting labor hours, and economic benchmarks to compute sustainable livelihood pricing.
@@ -59,10 +59,10 @@ You can connect either a **free cloud PostgreSQL** database or a **local Postgre
 #### Option B: Local PostgreSQL (Windows)
 If you have PostgreSQL installed locally on your Windows machine:
 ```env
-DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/kalaconnect
+DATABASE_URL=postgresql://postgres:yourpassword@localhost:5432/kalasetu
 ```
 
-> **Note**: If `DATABASE_URL` is empty, KalaConnect automatically runs with its built-in zero-config in-memory store so you can demo immediately without waiting!
+> **Note**: If `DATABASE_URL` is empty, kalaSetu automatically runs with its built-in zero-config in-memory store so you can demo immediately without waiting!
 
 ---
 

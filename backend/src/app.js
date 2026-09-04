@@ -30,7 +30,7 @@ app.use('/demo', express.static(path.join(publicDir, 'demo')));
 app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
-    service: 'KalaConnect AI Virtual Business Manager Backend',
+    service: 'kalaSetu AI Virtual Business Manager Backend',
     database: getDbStatus(),
     ai: getAiStatus(),
     timestamp: new Date().toISOString()

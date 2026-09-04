@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#FFFFFF" />
+        <stop offset="60%" stop-color="#F7FAFC" />
+        <stop offset="100%" stop-color="#EDF2F7" />
+       </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.12" />
+    </filter>
+  </defs>
+  
+  <rect width="500" height="500" fill="url(#bg)" />
+  
+  <!-- Guide Lines (Raw only) -->
+  
+
+  <!-- Graphic Item with Soft Shadow -->
+  <g filter="url(#softShadow)">
+    
+      <g transform="translate(250, 220)">
+        <!-- Mud-cloth Canvas -->
+        <rect x="-140" y="-120" width="280" height="240" rx="3" fill="#7B341E" stroke="#521B0B" stroke-width="5" />
+        
+        <!-- Central Spiral Dance (Tarpa Dance) in White Rice Paste -->
+        <circle cx="0" cy="0" r="10" fill="#FFFFFF" />
+        <!-- Inner dancers ring -->
+        <g stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF">
+          <!-- Tarpa Player in Center -->
+          <circle cx="0" cy="0" r="5" />
+          <polygon points="0,5 -5,22 5,22" />
+          <polygon points="0,22 -6,35 6,35" />
+          <line x1="0" y1="12" x2="16" y2="2" />
+          
+          <!-- Outer Circle Dancers -->
+          <g transform="translate(-40,-20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(40,-20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(-50,20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(50,20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(0,-50)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(0,50)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+        </g>
+        <!-- Warli Sun & Tree Elements -->
+        <circle cx="-95" cy="-75" r="12" fill="#FFFFFF" />
+        <path d="M-95,-95 L-95,-55 M-115,-75 L-75,-75 M-108,-88 L-82,-62 M-108,-62 L-82,-88" stroke="#FFFFFF" stroke-width="1.5" />
+        <!-- Triangular Palm Tree -->
+        <polygon points="90,-40 75,-25 105,-25" fill="#FFFFFF" />
+        <polygon points="90,-25 70,-10 110,-10" fill="#FFFFFF" />
+        <line x1="90" y1="-10" x2="90" y2="20" stroke="#FFFFFF" stroke-width="2" />
+      </g>
+  </g>
+
+  <rect x="20" y="20" width="170" height="36" rx="18" fill="#2B6CB0" fill-opacity="0.9" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.15))" />
+       <text x="36" y="43" fill="#FFFFFF" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">✨ AI STUDIO ENHANCED</text>
+
+  <!-- Craft Title Bar -->
+  <rect x="25" y="415" width="450" height="65" rx="14" fill="#1A202C" fill-opacity="0.88" />
+  <text x="45" y="443" fill="#F7FAFC" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Warli Tarpa Harvest Dance (Mud-Cloth)</text>
+  <text x="45" y="465" fill="#CBD5E0" font-family="system-ui, sans-serif" font-size="13">Natural Rice Paste on Ochre Earth | Authentic Tribal Art of Maharashtra</text>
+</svg>

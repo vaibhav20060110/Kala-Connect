@@ -5,7 +5,7 @@ import { getAiStatus } from '../services/geminiService.js';
 dotenv.config();
 
 console.log('========================================================');
-console.log('  KalaConnect System Integration Health Check');
+console.log('  kalaSetu System Integration Health Check');
 console.log('========================================================\n');
 
 async function runCheck() {

@@ -13,18 +13,18 @@ void main() {
         ChangeNotifierProvider(create: (_) => KalaLocalization()),
         ChangeNotifierProvider(create: (_) => OfflineUploadQueue()),
       ],
-      child: const KalaConnectApp(),
+      child: const KalaSetuApp(),
     ),
   );
 }
 
-class KalaConnectApp extends StatelessWidget {
-  const KalaConnectApp({Key? key}) : super(key: key);
+class KalaSetuApp extends StatelessWidget {
+  const KalaSetuApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KalaConnect (हस्तशिल्प व्यापार साथी)',
+      title: 'kalaSetu (हस्तशिल्प व्यापार साथी)',
       debugShowCheckedModeBanner: false,
       theme: KalaTheme.lightTheme,
       // Language picker shown first, before anything else

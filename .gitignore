@@ -20,6 +20,7 @@ pnpm-debug.log*
 # Uploads & Runtime storage (keep sample files)
 backend/uploads/*
 !backend/uploads/sample_*
+!backend/uploads/living_room_scene.svg
 !backend/uploads/.gitkeep
 backend/src/db/store.json
 

@@ -3,7 +3,8 @@ import { upload } from '../services/storageService.js';
 import {
   enhanceProductImage,
   catalogVoiceDescription,
-  calculateDynamicPricing
+  calculateDynamicPricing,
+  generateCertificateOfAuthenticity
 } from '../services/geminiService.js';
 
 const router = express.Router();
@@ -59,9 +60,11 @@ router.post('/image-enhance', upload.single('image'), async (req, res) => {
 router.post('/catalog', upload.single('audio'), async (req, res) => {
   try {
     const preferredLang = req.body.language || 'hi';
-    console.log(`[AI] Processing Voice Auto-Cataloging (Audio size: ${req.file ? req.file.size : 0} bytes, Lang: ${preferredLang})`);
+    const transcript = req.body.transcript || '';
+    const craftType = req.body.craft_type || '';
+    console.log(`[AI] Processing Voice Auto-Cataloging (Audio size: ${req.file ? req.file.size : 0} bytes, Lang: ${preferredLang}, Transcript: "${transcript}", Craft: "${craftType}")`);
 
-    const result = await catalogVoiceDescription(req.file, preferredLang);
+    const result = await catalogVoiceDescription(req.file, preferredLang, transcript, craftType);
 
     return res.json({
       success: true,
@@ -119,6 +122,52 @@ router.post('/price', async (req, res) => {
       details: err.message,
       friendly_retry_prompt: 'Unable to calculate price recommendation. Defaulting to standard craft margin.'
     });
+  }
+});
+
+/**
+ * POST /ai/painting-certificate
+ * Generates a formal Digital Certificate of Authenticity (COA) with provenance and verification hash
+ */
+router.post('/painting-certificate', async (req, res) => {
+  try {
+    const cert = generateCertificateOfAuthenticity(req.body);
+    return res.json({
+      success: true,
+      certificate: cert
+    });
+  } catch (err) {
+    console.error('[AI] Certificate error:', err);
+    return res.status(500).json({ error: 'Failed to generate certificate', details: err.message });
+  }
+});
+
+/**
+ * POST /ai/room-preview
+ * Returns room visualization configuration, available frames, and wall palettes
+ */
+router.post('/room-preview', async (req, res) => {
+  try {
+    const { image_url } = req.body;
+    return res.json({
+      success: true,
+      backdrop_url: '/uploads/living_room_scene.svg',
+      artwork_url: image_url || '/uploads/sample_painting_enhanced.jpg',
+      frames: [
+        { id: 'teak', name_en: 'Teakwood Frame', name_hi: 'सागौन की लकड़ी का फ्रेम', border: '16px solid #633B19', shadow: '0 14px 30px rgba(0,0,0,0.38)' },
+        { id: 'black', name_en: 'Modern Matte Black', name_hi: 'मैट ब्लैक फ्रेम', border: '12px solid #1A202C', shadow: '0 10px 24px rgba(0,0,0,0.32)' },
+        { id: 'gold', name_en: 'Gold Leaf Ornate', name_hi: 'शाही स्वर्ण फ्रेम', border: '14px solid #D4AF37', shadow: '0 16px 36px rgba(212,175,55,0.4)' },
+        { id: 'canvas', name_en: 'Gallery Stretched Canvas', name_hi: 'बिना फ्रेम (कैनवास रैप)', border: '4px solid #FAF5EE', shadow: '0 8px 20px rgba(0,0,0,0.25)' }
+      ],
+      wall_palettes: [
+        { id: 'ivory', name: 'Warm Ivory', hex: '#FAF8F5' },
+        { id: 'sage', name: 'Heritage Sage', hex: '#E2E8DD' },
+        { id: 'slate', name: 'Modern Slate', hex: '#DDE2E6' },
+        { id: 'terracotta', name: 'Muted Terracotta', hex: '#F0E2DA' }
+      ]
+    });
+  } catch (err) {
+    return res.status(500).json({ error: 'Failed to configure room preview' });
   }
 });
 

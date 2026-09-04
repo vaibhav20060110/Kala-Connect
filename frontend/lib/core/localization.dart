@@ -21,7 +21,7 @@ class KalaLocalization extends ChangeNotifier {
   // Bilingual Dictionary
   static const Map<String, Map<String, String>> _localizedValues = {
     'en': {
-      'app_title': 'KalaConnect',
+      'app_title': 'kalaSetu',
       'app_subtitle': 'AI Business Manager for Artisans',
       'select_language': 'Select Your Language',
       'welcome': 'Welcome, Artisan',
@@ -101,7 +101,7 @@ class KalaLocalization extends ChangeNotifier {
       'odop_eligible': 'ODOP (One District One Product) Certified',
     },
     'hi': {
-      'app_title': 'कला कनेक्ट (KalaConnect)',
+      'app_title': 'कला सेतु (kalaSetu)',
       'app_subtitle': 'हस्तशिल्पियों का डिजिटल व्यापार साथी',
       'select_language': 'अपनी भाषा चुनें',
       'welcome': 'नमस्ते, शिल्पी साथी',

@@ -39,7 +39,7 @@ class QueuedUploadItem {
 }
 
 class OfflineUploadQueue extends ChangeNotifier {
-  static const String _storageKey = 'kalaconnect_offline_queue';
+  static const String _storageKey = 'kalasetu_offline_queue';
   final List<QueuedUploadItem> _queue = [];
 
   List<QueuedUploadItem> get queue => List.unmodifiable(_queue);

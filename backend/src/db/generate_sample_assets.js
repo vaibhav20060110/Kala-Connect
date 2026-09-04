@@ -55,6 +55,67 @@ function createCraftSvg({ title, subtitle, tag, isEnhanced, primaryColor, second
         <path d="M-30,20 C-30,5 -15,0 0,20 C-15,40 -30,35 -30,20 Z" fill="${secondaryColor}" />
         <path d="M30,20 C30,5 15,0 0,20 C15,40 30,35 30,20 Z" fill="${secondaryColor}" />
       </g>`;
+  } else if (iconType === 'painting_madhubani') {
+    graphic = `
+      <g transform="translate(250, 220)">
+        <!-- Canvas board with double line border -->
+        <rect x="-140" y="-120" width="280" height="240" rx="4" fill="#FDF8ED" stroke="#3D2314" stroke-width="6" />
+        <rect x="-132" y="-112" width="264" height="224" fill="none" stroke="#C05621" stroke-width="2" stroke-dasharray="4,4" />
+        
+        <!-- Mithila Tree of Life Trunk & Foliage -->
+        <path d="M-15,100 C-10,30 -40,-20 -5, -60 C30,-20 10,30 15,100 Z" fill="#744210" />
+        <circle cx="-50" cy="-60" r="35" fill="#276749" fill-opacity="0.85" />
+        <circle cx="40" cy="-60" r="35" fill="#276749" fill-opacity="0.85" />
+        <circle cx="-5" cy="-85" r="40" fill="#2F855A" fill-opacity="0.9" />
+        <circle cx="-5" cy="-60" r="24" fill="#D69E2E" />
+
+        <!-- Madhubani Sun / Flower Motif -->
+        <circle cx="-5" cy="-60" r="14" fill="#C53030" />
+        
+        <!-- Traditional Madhubani Fish (Matsya) Motif -->
+        <path d="M-80,40 C-50,20 -30,60 0,40 C-30,20 -50,60 -80,40 Z" fill="#C53030" stroke="#742A2A" stroke-width="2" />
+        <polygon points="-80,40 -100,25 -95,40 -100,55" fill="#C53030" />
+        <circle cx="-40" cy="38" r="3" fill="#FFFFFF" />
+
+        <!-- Peacock bird motif -->
+        <path d="M40,20 C60,0 80,10 75,35 C70,55 50,55 40,40 Z" fill="#2B6CB0" />
+        <circle cx="70" cy="18" r="7" fill="#2B6CB0" />
+        <path d="M75,18 L88,14 L77,22 Z" fill="#DD6B20" />
+        <!-- Crest feather -->
+        <path d="M68,12 Q64,0 72,2" stroke="#2B6CB0" stroke-width="2" fill="none" />
+      </g>`;
+  } else if (iconType === 'painting_warli') {
+    graphic = `
+      <g transform="translate(250, 220)">
+        <!-- Mud-cloth Canvas -->
+        <rect x="-140" y="-120" width="280" height="240" rx="3" fill="#7B341E" stroke="#521B0B" stroke-width="5" />
+        
+        <!-- Central Spiral Dance (Tarpa Dance) in White Rice Paste -->
+        <circle cx="0" cy="0" r="10" fill="#FFFFFF" />
+        <!-- Inner dancers ring -->
+        <g stroke="#FFFFFF" stroke-width="2" fill="#FFFFFF">
+          <!-- Tarpa Player in Center -->
+          <circle cx="0" cy="0" r="5" />
+          <polygon points="0,5 -5,22 5,22" />
+          <polygon points="0,22 -6,35 6,35" />
+          <line x1="0" y1="12" x2="16" y2="2" />
+          
+          <!-- Outer Circle Dancers -->
+          <g transform="translate(-40,-20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(40,-20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(-50,20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(50,20)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(0,-50)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+          <g transform="translate(0,50)"><circle cx="0" cy="0" r="4"/><polygon points="0,4 -4,14 4,14"/><polygon points="0,14 -4,24 4,24"/></g>
+        </g>
+        <!-- Warli Sun & Tree Elements -->
+        <circle cx="-95" cy="-75" r="12" fill="#FFFFFF" />
+        <path d="M-95,-95 L-95,-55 M-115,-75 L-75,-75 M-108,-88 L-82,-62 M-108,-62 L-82,-88" stroke="#FFFFFF" stroke-width="1.5" />
+        <!-- Triangular Palm Tree -->
+        <polygon points="90,-40 75,-25 105,-25" fill="#FFFFFF" />
+        <polygon points="90,-25 70,-10 110,-10" fill="#FFFFFF" />
+        <line x1="90" y1="-10" x2="90" y2="20" stroke="#FFFFFF" stroke-width="2" />
+      </g>`;
   } else {
     // Metal / Terracotta craft
     graphic = `
@@ -134,6 +195,33 @@ const assets = [
     primaryColor: '#3182CE',
     secondaryColor: '#FFFFFF',
     iconType: 'pottery'
+  },
+  {
+    filename: 'sample_painting_raw.svg',
+    title: 'Madhubani Tree of Life (Raw Canvas)',
+    subtitle: 'Natural Pigments on Khadi Paper | Workshop Capture | Unframed',
+    isEnhanced: false,
+    primaryColor: '#744210',
+    secondaryColor: '#276749',
+    iconType: 'painting_madhubani'
+  },
+  {
+    filename: 'sample_painting_enhanced.svg',
+    title: 'Madhubani Tree of Life (AI Studio Enhanced)',
+    subtitle: 'Mithila Folk School | Pigment Saturation Balanced | 1:1 E-Commerce Ready',
+    isEnhanced: true,
+    primaryColor: '#744210',
+    secondaryColor: '#2F855A',
+    iconType: 'painting_madhubani'
+  },
+  {
+    filename: 'sample_painting_warli.svg',
+    title: 'Warli Tarpa Harvest Dance (Mud-Cloth)',
+    subtitle: 'Natural Rice Paste on Ochre Earth | Authentic Tribal Art of Maharashtra',
+    isEnhanced: true,
+    primaryColor: '#7B341E',
+    secondaryColor: '#FFFFFF',
+    iconType: 'painting_warli'
   }
 ];
 
@@ -143,5 +231,7 @@ assets.forEach(item => {
   // Also create .jpg alias pointing to svg or readable
   fs.writeFileSync(path.join(uploadsDir, item.filename.replace('.svg', '.jpg')), createCraftSvg(item), 'utf-8');
 });
+
+console.log('[Assets] Created sample SVG/JPG product preview images including traditional paintings in backend/uploads/.');
 
 console.log('[Assets] Created sample SVG/JPG product preview images in backend/uploads/.');

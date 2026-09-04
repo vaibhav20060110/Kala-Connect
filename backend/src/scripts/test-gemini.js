@@ -7,12 +7,12 @@ const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
 
 console.log('========================================================');
-console.log('  KalaConnect Google Gemini API Connection Tester');
+console.log('  kalaSetu Google Gemini API Connection Tester');
 console.log('========================================================\n');
 
 if (!apiKey || apiKey.trim() === '') {
   console.log('⚠️  Neither GEMINI_API_KEY nor GOOGLE_API_KEY is set in backend/.env');
-  console.log('ℹ️  KalaConnect is running with built-in intelligent fallback simulation.\n');
+  console.log('ℹ️  kalaSetu is running with built-in intelligent fallback simulation.\n');
   console.log('To connect Google Gemini API:');
   console.log('1. Get a FREE API key from Google AI Studio:');
   console.log('   👉 https://aistudio.google.com/');
@@ -33,7 +33,7 @@ async function testGemini() {
     const genAI = new GoogleGenerativeAI(apiKey.trim());
     const model = genAI.getGenerativeModel({ model: modelName });
 
-    const prompt = 'Respond in one short sentence confirming that the KalaConnect AI Virtual Business Manager connection is live and active.';
+    const prompt = 'Respond in one short sentence confirming that the kalaSetu AI Virtual Business Manager connection is live and active.';
     const result = await model.generateContent(prompt);
     const responseText = result.response.text().trim();
 
