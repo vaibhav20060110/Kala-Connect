@@ -67,11 +67,61 @@ function loadSeedsIntoMemory() {
   }
 }
 
+function getPoolConfig(connectionString) {
+  const isLocal = connectionString.includes('localhost') ||
+                  connectionString.includes('127.0.0.1') ||
+                  connectionString.includes('host.docker.internal');
+
+  return {
+    connectionString,
+    ssl: isLocal ? false : { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000
+  };
+}
+
+async function seedPostgresDemoData(client) {
+  const artCount = await client.query('SELECT count(*) FROM artisans');
+  if (parseInt(artCount.rows[0].count, 10) === 0) {
+    console.log('[DB] Seeding default demo artisan and products into PostgreSQL...');
+    await client.query(`
+      INSERT INTO users (id, phone)
+      VALUES ('user-demo-01', '+91 9876543210')
+      ON CONFLICT (id) DO NOTHING;
+    `);
+    await client.query(`
+      INSERT INTO artisans (id, user_id, name, craft_type, location, language_pref)
+      VALUES ('artisan-demo-01', 'user-demo-01', 'Radha Devi (राधा देवी)', 'Handloom & Zari Weaving', 'Varanasi, Uttar Pradesh', 'hi')
+      ON CONFLICT (id) DO NOTHING;
+    `);
+    await client.query(`
+      INSERT INTO products (
+        id, artisan_id, title_en, title_hi, description_en, description_hi,
+        raw_image_url, enhanced_image_url, audio_notes_url, price, category,
+        material_cost, hours_spent, status, views
+      ) VALUES 
+      (
+        'prod-demo-1', 'artisan-demo-01', 'Banarasi Kadwa Silk Dupatta', 'बनारसी कड़वा सिल्क दुपट्टा',
+        'Hand-woven pure mulberry silk dupatta with delicate floral gold zari motifs along the border.',
+        'शुद्ध शहतूत रेशम पर हाथ से बुना पारंपरिक दुपट्टा, किनारों पर सोने की बारीक जरी का काम।',
+        '/uploads/sample_raw_1.jpg', '/uploads/sample_enhanced_1.jpg', NULL, 2450.00, 'Textiles', 950.00, 16.0, 'published', 142
+      ),
+      (
+        'prod-demo-2', 'artisan-demo-01', 'Jaipur Hand-painted Blue Ceramic Vase', 'जयपुर हस्तनिर्मित ब्लू पॉटरी फूलदान',
+        'Traditional lead-free blue pottery vase with Persian cobalt floral designs.',
+        'पारंपरिक नीली मिट्टी का फूलदान, हस्तनिर्मित फारसी कोबाल्ट फूलों की कलाकृति।',
+        '/uploads/sample_raw_2.jpg', '/uploads/sample_enhanced_2.jpg', NULL, 1150.00, 'Pottery', 380.00, 8.0, 'published', 89
+      )
+      ON CONFLICT (id) DO NOTHING;
+    `);
+  }
+}
+
 export async function initDatabase() {
   if (databaseUrl) {
     try {
-      console.log('[DB] Connecting to PostgreSQL at:', databaseUrl.replace(/:[^:@]+@/, ':****@'));
-      pool = new Pool({ connectionString: databaseUrl });
+      const maskedUrl = databaseUrl.replace(/:[^:@]+@/, ':****@');
+      console.log(`[DB] Connecting to PostgreSQL at: ${maskedUrl}`);
+      pool = new Pool(getPoolConfig(databaseUrl));
       const client = await pool.connect();
       console.log('[DB] Connected successfully to PostgreSQL database.');
 
@@ -85,6 +135,10 @@ export async function initDatabase() {
         const seeds = fs.readFileSync(path.join(__dirname, 'seeds.sql'), 'utf-8');
         await client.query(seeds);
       }
+
+      // Ensure demo artisan and products exist in PostgreSQL
+      await seedPostgresDemoData(client);
+
       client.release();
       isPostgres = true;
       return;
@@ -98,9 +152,10 @@ export async function initDatabase() {
   }
 
   loadSeedsIntoMemory();
-  // Ensure default demo artisan exists
+  // Ensure default demo artisan exists in memory
   ensureDemoArtisan();
 }
+
 
 function ensureDemoArtisan() {
   const demoUserId = 'user-demo-01';
@@ -323,3 +378,21 @@ export async function query(sql, params = []) {
 export function getLocalStore() {
   return inMemoryStore;
 }
+
+export function getDbStatus() {
+  return {
+    isPostgres,
+    mode: isPostgres ? 'postgresql' : 'in-memory-fallback',
+    configured: Boolean(databaseUrl),
+    databaseUrlMasked: databaseUrl ? databaseUrl.replace(/:[^:@]+@/, ':****@') : null
+  };
+}
+
+export async function closeDatabase() {
+  if (pool) {
+    await pool.end();
+    pool = null;
+    isPostgres = false;
+  }
+}
+

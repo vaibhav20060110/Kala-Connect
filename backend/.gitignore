@@ -1,0 +1,10 @@
+.env
+.env.*
+*.env
+!.env.example
+node_modules/
+npm-debug.log*
+uploads/*
+!uploads/sample_*
+!uploads/.gitkeep
+src/db/store.json

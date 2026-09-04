@@ -6,7 +6,10 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --watch src/server.js",
+    "test:db": "node src/scripts/test-db.js",
+    "test:gemini": "node src/scripts/test-gemini.js",
+    "check": "node src/scripts/check-status.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",

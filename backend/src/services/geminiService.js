@@ -12,18 +12,45 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
 
-const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
 let genAI = null;
-if (apiKey) {
-  try {
-    genAI = new GoogleGenerativeAI(apiKey);
-    console.log('[Gemini] Initialized GoogleGenerativeAI with configured API key.');
-  } catch (err) {
-    console.warn('[Gemini] Failed to initialize GoogleGenerativeAI:', err.message);
+let activeApiKey = null;
+
+export function getGenAI() {
+  const currentKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!currentKey || currentKey.trim() === '') return null;
+  const trimmed = currentKey.trim();
+  if (!genAI || trimmed !== activeApiKey) {
+    try {
+      genAI = new GoogleGenerativeAI(trimmed);
+      activeApiKey = trimmed;
+      console.log('[Gemini] Initialized GoogleGenerativeAI with configured API key.');
+    } catch (err) {
+      console.warn('[Gemini] Failed to initialize GoogleGenerativeAI:', err.message);
+      return null;
+    }
   }
-} else {
-  console.log('[Gemini] No GEMINI_API_KEY found in environment. Intelligent fallback mode enabled.');
+  return genAI;
 }
+
+// Initial bootstrap check
+const initialClient = getGenAI();
+if (!initialClient) {
+  console.log('[Gemini] No GEMINI_API_KEY or GOOGLE_API_KEY found in environment. Intelligent fallback mode enabled.');
+}
+
+export function getAiStatus() {
+  const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  const isConfigured = Boolean(key && key.trim() !== '');
+  const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+  return {
+    configured: isConfigured,
+    service: 'Google Generative AI (Gemini)',
+    model: modelName,
+    status: isConfigured ? 'ready' : 'fallback-simulation',
+    keyMasked: isConfigured ? `${key.trim().slice(0, 4)}...${key.trim().slice(-4)}` : null
+  };
+}
+
 
 /**
  * 1. AI Image Enhancer & Studio
@@ -40,9 +67,10 @@ export async function enhanceProductImage(file) {
   };
 
   // If Gemini API is available, analyze the image
-  if (genAI) {
+  const ai = getGenAI();
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = ai.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
       const imageBytes = fs.readFileSync(file.path).toString('base64');
       const prompt = `Analyze this handcrafted artisan product photograph.
 Identify the craft item, assess visual lighting flaws (glare, harsh shadows, clutter in background), and describe how to present it for a premium online e-commerce buyer.
@@ -149,9 +177,10 @@ export async function catalogVoiceDescription(file, preferredLang = 'hi') {
     transcript: 'यह शुद्ध मिट्टी से बना सजावटी बर्तन है, जिसे मैंने हाथ से चाक पर तैयार किया है। इसमें प्राकृतिक रंगों का उपयोग किया गया है।'
   };
 
-  if (genAI && file) {
+  const ai = getGenAI();
+  if (ai && file) {
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = ai.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
       const audioBytes = fs.readFileSync(file.path).toString('base64');
 
       const systemPrompt = `You are an expert bilingual catalog manager for Indian rural artisans on the KalaConnect platform.
@@ -236,9 +265,10 @@ export async function calculateDynamicPricing({ category, material_cost, hours_s
   let justification_hi = `बाजार में ऐसे हस्तशिल्प ₹${suggestedMin}–${suggestedMax} में बिकते हैं। आपकी सामग्री लागत (₹${matCost}) और ${hours} घंटे के श्रम के आधार पर ₹${calculatedFairPrice} उचित मूल्य है।`;
 
   // If Gemini API is available, ask Gemini to refine the economic reasoning
-  if (genAI) {
+  const ai = getGenAI();
+  if (ai) {
     try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const model = ai.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
       const prompt = `You are a fair-trade dynamic pricing advisor for traditional Indian artisans on the KalaConnect platform.
 Product Details:
 - Category: ${craftCategory}

@@ -5,6 +5,8 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js';
 import productRoutes from './routes/product.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import { getDbStatus } from './db/index.js';
+import { getAiStatus } from './services/geminiService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +31,8 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     service: 'KalaConnect AI Virtual Business Manager Backend',
+    database: getDbStatus(),
+    ai: getAiStatus(),
     timestamp: new Date().toISOString()
   });
 });
