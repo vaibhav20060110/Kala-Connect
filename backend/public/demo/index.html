@@ -3,519 +3,1377 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>kalaSetu (कला सेतु) - AI Business Manager for Artisans</title>
+  <title>कला सेतु (kalaSetu) - AI-Powered Business Platform for Indian Artisans</title>
+  <meta name="description" content="Empowering traditional Indian artisans with AI studio image enhancement, multilingual voice auto-cataloging, fair-trade dynamic pricing, AR wall visualizer, and cryptographic certificate of authenticity." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <div class="demo-wrapper">
-    <!-- Left: Phone Simulator Frame -->
-    <div class="phone-container">
-      <div class="phone-speaker"></div>
-      <div class="phone-screen">
+<body class="mode-full-app">
+
+  <!-- In-App Floating Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================
+       TOP APP NAVIGATION BAR (Sticky Glassmorphic Full Header)
+       ======================================================== -->
+  <header class="kalasetu-navbar" id="kalasetuNavbar">
+    <div class="navbar-inner">
+      
+      <!-- Brand Identity -->
+      <div class="nav-brand" id="navBrandLogo" onclick="window.switchPortal('marketplace')">
+        <div class="brand-badge-emblem">🎨</div>
+        <div class="brand-text-col">
+          <div class="brand-name-row">
+            <span class="brand-title">kalaSetu</span>
+            <span class="brand-badge-tag" data-i18n="nav_tagline">कला सेतु</span>
+          </div>
+          <span class="brand-subtext" data-i18n="nav_subtext">राष्ट्रीय हस्तशिल्प एवं हथकरघा डिजिटल सेतु</span>
+        </div>
+      </div>
+
+      <!-- Main Portal Navigation Tabs -->
+      <nav class="nav-portal-tabs" aria-label="Portals">
+        <button class="portal-tab-btn active" id="tabMarketplace" onclick="window.switchPortal('marketplace')">
+          <span class="tab-icon">🛍️</span>
+          <span class="tab-label" data-i18n="nav_marketplace">हस्तशिल्प बाज़ार</span>
+        </button>
+        <button class="portal-tab-btn" id="tabArtisanStudio" onclick="window.switchPortal('artisan-studio')">
+          <span class="tab-icon">⚒️</span>
+          <span class="tab-label" data-i18n="nav_studio">शिल्पी स्टूडियो</span>
+        </button>
+        <button class="portal-tab-btn" id="tabGemPortal" onclick="window.openGeMModal()">
+          <span class="tab-icon">🏛️</span>
+          <span class="tab-label" data-i18n="nav_gem">GeM व ODOP</span>
+          <span class="badge-gem-dot">Live</span>
+        </button>
+      </nav>
+
+      <!-- Global Live Search Bar -->
+      <div class="nav-search-wrap">
+        <span class="search-lens">🔍</span>
+        <input type="text" id="globalSearchInput" placeholder="शिल्प, कलाकार या सामग्री खोजें (Search pottery, silk, Madhubani)..." data-i18n-placeholder="search_placeholder" />
+        <button class="search-clear-btn hidden" id="btnClearSearch" title="Clear">✕</button>
+      </div>
+
+      <!-- Right Utility Actions -->
+      <div class="nav-actions-col">
         
-        <!-- Toast Notification Container -->
-        <div class="toast-container" id="toastContainer"></div>
+        <!-- View Mode Switcher (Full App vs Phone Simulator) -->
+        <button class="btn-mode-toggle" id="btnToggleViewMode" title="Switch between Full Web App and Phone Simulator Mode">
+          <span class="mode-icon" id="modeIcon">📱</span>
+          <span class="mode-text" id="modeText" data-i18n="mode_phone_sim">फ़ोन डेमो</span>
+        </button>
 
-        <!-- App Header Bar -->
-        <header class="app-header">
-          <div class="header-left">
-            <button class="header-back-btn hidden" id="headerBackBtn" title="Go Back" onclick="window.goBack()">‹</button>
-            <span class="app-logo-emoji">🎨</span>
-            <span class="app-title-text" id="headerTitle" data-i18n="app_title">कला सेतु</span>
+        <!-- 1-Tap Bilingual Language Toggle -->
+        <div class="nav-lang-control">
+          <button class="lang-pill active" id="btnGlobalLangHi" data-lang="hi">🇮🇳 हिंदी</button>
+          <button class="lang-pill" id="btnGlobalLangEn" data-lang="en">🌐 EN</button>
+        </div>
+
+        <!-- Cart Trigger Button -->
+        <button class="btn-nav-cart" id="btnOpenCart" title="View Shopping Cart">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-label" data-i18n="cart_title">कार्ट</span>
+          <span class="cart-counter-badge" id="cartCountBadge">0</span>
+        </button>
+
+        <!-- Active Artisan Chip -->
+        <div class="nav-artisan-profile" id="navArtisanProfile" onclick="window.switchPortal('artisan-studio')">
+          <div class="artisan-avatar-circle">👩‍🎨</div>
+          <div class="artisan-meta-text">
+            <strong class="artisan-display-name">राधा देवी</strong>
+            <span class="artisan-cluster-tag">वाराणसी, UP</span>
           </div>
-          <div class="header-actions">
-            <button class="gem-badge-btn" id="headerGemBtn" title="Government e-Marketplace">
-              🏛️ GeM
-            </button>
-            <div class="lang-segmented-control" id="headerLangControl">
-              <button class="lang-seg-btn active" id="btnLangHi" data-lang="hi">🇮🇳 हिंदी</button>
-              <button class="lang-seg-btn" id="btnLangEn" data-lang="en">🌐 English</button>
-            </div>
-            <button class="lang-toggle-btn" style="display:none;" id="langToggleBtn">
-              <span id="langToggleText">English</span>
-            </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       MAIN APP CONTAINER (Portals)
+       ======================================================== -->
+  <main class="main-app-container">
+
+    <!-- ======================================================
+         PORTAL 1: BUYER MARKETPLACE (Full Modern Web Experience)
+         ====================================================== -->
+    <section class="portal-view active" id="viewMarketplace">
+      
+      <!-- Rich Hero Showcase Banner -->
+      <section class="marketplace-hero">
+        <div class="hero-backdrop-pattern"></div>
+        <div class="hero-content">
+          <div class="hero-pill-badge">
+            <span class="emblem-star">★</span>
+            <span data-i18n="hero_badge">100% प्रामाणिक पारंपरिक भारतीय हस्तकला • निष्पक्ष आजीविका गारंटी</span>
           </div>
-        </header>
+          <h1 class="hero-heading" data-i18n="hero_title">
+            भारत की समृद्ध हस्तकला विरासत <br />
+            <span class="hero-highlight">सीधे उस्ताद कारीगरों के हाथों से</span>
+          </h1>
+          <p class="hero-description" data-i18n="hero_desc">
+            जेमिनी AI द्वारा संचालित निष्पक्ष मूल्य निर्धारण, डिजिटल जीआई प्रामाणिकता प्रमाणपत्र (COA), तथा आपके घर की दीवार पर लाइव एआर (AR) पेंटिंग प्रीव्यू के साथ खरीदारी करें।
+          </p>
 
-        <!-- Dynamic Screen Container -->
-        <main class="app-main-content">
-          
-          <!-- Screen 1: Language Selection -->
-          <section id="screen-language" class="app-screen active">
-            <div class="brand-hero">
-              <div class="hero-logo-box">🎨</div>
-              <h1 class="brand-name">kalaSetu</h1>
-              <p class="brand-tagline" data-i18n="tagline">हस्तशिल्पियों का डिजिटल व्यापार साथी</p>
-              <p class="brand-sub" data-i18n="tagline_sub">भारतीय कारीगरों के लिए AI वर्चुअल बिजनेस मैनेजर</p>
+          <!-- Core Pillars Highlights -->
+          <div class="hero-pillars-row">
+            <div class="pillar-card">
+              <span class="pillar-icon">⚖️</span>
+              <div>
+                <strong data-i18n="pillar_fair_title">निष्पक्ष आजीविका</strong>
+                <p data-i18n="pillar_fair_sub">सामग्री व श्रम की पूरी पारदर्शिता</p>
+              </div>
             </div>
+            <div class="pillar-card">
+              <span class="pillar-icon">📜</span>
+              <div>
+                <strong data-i18n="pillar_coa_title">जीआई प्रामाणिकता</strong>
+                <p data-i18n="pillar_coa_sub">नकल-मुक्त क्रिप्टोग्राफिक पासपोर्ट</p>
+              </div>
+            </div>
+            <div class="pillar-card">
+              <span class="pillar-icon">🖼️</span>
+              <div>
+                <strong data-i18n="pillar_ar_title">कमरे में वॉल प्रीव्यू</strong>
+                <p data-i18n="pillar_ar_sub">फ्रेम व दीवार के रंग के साथ देखें</p>
+              </div>
+            </div>
+            <div class="pillar-card">
+              <span class="pillar-icon">💬</span>
+              <div>
+                <strong data-i18n="pillar_wa_title">सीधा व्हाट्सएप संपर्क</strong>
+                <p data-i18n="pillar_wa_sub">कारीगर से सीधे बातचीत व ऑर्डर</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <div class="lang-selection-box">
-              <h3 class="section-title" data-i18n="select_language">अपनी पसंदीदा भाषा चुनें</h3>
+      <!-- Category Filter Pills Bar -->
+      <section class="craft-category-bar">
+        <div class="category-pills-scroll">
+          <button class="category-pill active" data-filter="all">
+            <span class="cat-icon">🏷️</span>
+            <span data-i18n="filter_all">सभी कलाकृतियाँ</span>
+          </button>
+          <button class="category-pill" data-filter="pottery">
+            <span class="cat-icon">🏺</span>
+            <span data-i18n="filter_pottery">मिट्टी के बर्तन व मूर्तियाँ</span>
+          </button>
+          <button class="category-pill" data-filter="fiber">
+            <span class="cat-icon">🌾</span>
+            <span data-i18n="filter_fiber">मादुर चटाई व रेशे</span>
+          </button>
+          <button class="category-pill" data-filter="cottage">
+            <span class="cat-icon">🧺</span>
+            <span data-i18n="filter_cottage">कुटीर उद्योग व टोकरी</span>
+          </button>
+          <button class="category-pill" data-filter="paintings">
+            <span class="cat-icon">🎨</span>
+            <span data-i18n="filter_paintings">पारंपरिक लोक चित्रकला</span>
+          </button>
+          <button class="category-pill" data-filter="textiles">
+            <span class="cat-icon">🧵</span>
+            <span data-i18n="filter_textiles">हथकरघा व बनारसी रेशम</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Marketplace Filter & Sort Toolbar -->
+      <section class="marketplace-toolbar">
+        <div class="toolbar-left">
+          <span class="results-count-text" id="marketplaceCountText">8 कलाकृतियाँ उपलब्ध</span>
+          <label class="filter-checkbox-label">
+            <input type="checkbox" id="filterGiOnly" />
+            <span data-i18n="filter_gi_only">🌟 केवल जीआई (GI) प्रमाणित शिल्प</span>
+          </label>
+        </div>
+        <div class="toolbar-right">
+          <span class="sort-lbl" data-i18n="sort_label">क्रमबद्ध करें:</span>
+          <select id="sortMarketplace" class="select-sort">
+            <option value="recommended" data-i18n="sort_rec">लोकप्रिय व अनुशंसित</option>
+            <option value="price-asc" data-i18n="sort_asc">मूल्य: कम से ज्यादा</option>
+            <option value="price-desc" data-i18n="sort_desc">मूल्य: ज्यादा से कम</option>
+            <option value="hours" data-i18n="sort_hours">कारीगरी श्रम समय (अधिकतम)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Main Marketplace Craft Grid -->
+      <section class="marketplace-grid-section">
+        <div class="marketplace-grid" id="marketplaceGrid">
+          <!-- Dynamically injected product cards -->
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ======================================================
+         PORTAL 2: ARTISAN BUSINESS STUDIO (Creator Hub)
+         ====================================================== -->
+    <section class="portal-view" id="viewArtisanStudio">
+      
+      <!-- Artisan Profile & Action Header -->
+      <div class="studio-header-card">
+        <div class="studio-header-left">
+          <div class="studio-artisan-avatar">👩‍🎨</div>
+          <div class="studio-artisan-details">
+            <div class="studio-name-row">
+              <h2 id="studioArtisanNameDisplay">राधा देवी (Radha Devi)</h2>
+              <span class="gem-verified-badge" onclick="window.openGeMModal()">🏛️ GeM & ODOP Verified</span>
+            </div>
+            <p class="studio-craft-niche" id="studioCraftNicheDisplay">पारंपरिक हथकरघा, बनारसी कड़वा जरी बुनाई एवं लोक कला</p>
+            <p class="studio-location-text">📍 वाराणसी क्लस्टर, उत्तर प्रदेश • शिल्पकार कोड: <strong>UP-VAR-9842</strong></p>
+          </div>
+        </div>
+
+        <div class="studio-header-actions">
+          <button class="btn-studio-primary" id="btnStudioNewCraft" onclick="window.openStudioWizard()">
+            <span class="btn-icon">📷</span>
+            <span data-i18n="btn_digitize_new">✨ नया शिल्प जोड़ें (AI डिजिटाइज़)</span>
+          </button>
+          <button class="btn-studio-outline" onclick="window.openGeMModal()">
+            <span class="btn-icon">🏛️</span>
+            <span data-i18n="btn_gem_sync_hub">GeM पोर्टल सिंक</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Performance Metrics Grid -->
+      <div class="studio-stats-grid">
+        <div class="studio-stat-card">
+          <div class="stat-card-icon">🏺</div>
+          <div class="stat-card-info">
+            <span class="stat-card-num" id="studioCraftsCount">8</span>
+            <span class="stat-card-lbl" data-i18n="stat_active_crafts">सक्रिय कैटलॉग शिल्प</span>
+          </div>
+          <span class="stat-trend positive">+2 इस सप्ताह</span>
+        </div>
+        <div class="studio-stat-card">
+          <div class="stat-card-icon">👁️</div>
+          <div class="stat-card-info">
+            <span class="stat-card-num" id="studioViewsCount">412</span>
+            <span class="stat-card-lbl" data-i18n="stat_views">खरीदार दर्शक</span>
+          </div>
+          <span class="stat-trend positive">↑ 24% वृद्धि</span>
+        </div>
+        <div class="studio-stat-card">
+          <div class="stat-card-icon">💬</div>
+          <div class="stat-card-info">
+            <span class="stat-card-num" id="studioInquiriesCount">19</span>
+            <span class="stat-card-lbl" data-i18n="stat_inquiries">व्हाट्सएप पूछताछ / ऑर्डर</span>
+          </div>
+          <span class="stat-trend positive">5 नए आज</span>
+        </div>
+        <div class="studio-stat-card highlight">
+          <div class="stat-card-icon">💰</div>
+          <div class="stat-card-info">
+            <span class="stat-card-num" id="studioEarningsCount">₹34,200</span>
+            <span class="stat-card-lbl" data-i18n="stat_earnings">कुल निष्पक्ष शिल्पी आय</span>
+          </div>
+          <span class="stat-trend safe">100% पारदर्शी</span>
+        </div>
+      </div>
+
+      <!-- Quick Digitize Sample Presets -->
+      <div class="studio-quick-presets-box">
+        <div class="presets-header">
+          <h4 data-i18n="quick_samples_title">⚡ 1-टैप डेमो शिल्प चुनें (त्वरित परीक्षण हेतु):</h4>
+          <span class="presets-sub" data-i18n="quick_samples_sub">स्वचालित फोटो, विवरण, मूल्य निर्धारण व विश्लेषण लोड करें</span>
+        </div>
+        <div class="presets-chips-row">
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('pot')">
+            <span class="preset-emoji">🏺</span>
+            <strong>मिट्टी का मटका</strong>
+            <small>टेराकोटा पॉटरी</small>
+          </button>
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('clay')">
+            <span class="preset-emoji">☕</span>
+            <strong>कुल्हड़ व पात्र</strong>
+            <small>पारंपरिक मिट्टी कला</small>
+          </button>
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('mat')">
+            <span class="preset-emoji">🌾</span>
+            <strong>मादुर चटाई</strong>
+            <small>नदी घास बुनाई</small>
+          </button>
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('cottage')">
+            <span class="preset-emoji">🧺</span>
+            <strong>कुटीर टोकरी</strong>
+            <small>सबाई घास व बेंत</small>
+          </button>
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('painting')">
+            <span class="preset-emoji">🎨</span>
+            <strong>मधुबनी पेंटिंग</strong>
+            <small>मिथिला लोक कला</small>
+          </button>
+          <button class="preset-chip-card" onclick="window.loadCraftSampleAndOpen('textile')">
+            <span class="preset-emoji">🧵</span>
+            <strong>बनारसी दुपट्टा</strong>
+            <small>शुद्ध कड़वा सिल्क</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- My Crafts Inventory Section -->
+      <div class="studio-inventory-section">
+        <div class="inventory-header">
+          <div>
+            <h3 data-i18n="my_inventory_title">📦 मेरी शिल्प सूची एवं प्रबंधन</h3>
+            <p data-i18n="my_inventory_sub">मूल्य समायोजित करें, प्रमाणपत्र देखें, या व्हाट्सएप कैटलॉग साझा करें</p>
+          </div>
+          <button class="btn-whatsapp-catalog" onclick="window.shareFullCatalogOnWhatsApp()">
+            <span>💬 संपूर्ण कैटलॉग व्हाट्सएप पर भेजें</span>
+          </button>
+        </div>
+
+        <div class="studio-inventory-table-wrap">
+          <table class="studio-inventory-table">
+            <thead>
+              <tr>
+                <th data-i18n="col_craft">शिल्प</th>
+                <th data-i18n="col_category">श्रेणी</th>
+                <th data-i18n="col_cost">लागत विभाजन</th>
+                <th data-i18n="col_price">विक्रय मूल्य</th>
+                <th data-i18n="col_status">स्थिति</th>
+                <th data-i18n="col_actions">कार्रवाई</th>
+              </tr>
+            </thead>
+            <tbody id="studioInventoryTableBody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================
+         PORTAL 3: PHONE SIMULATOR VIEW (Hackathon Judge Mode)
+         ====================================================== -->
+    <section class="portal-view" id="viewPhoneDemo">
+      <div class="demo-wrapper">
+        <!-- Left: Phone Simulator Frame -->
+        <div class="phone-container">
+          <div class="phone-speaker"></div>
+          <div class="phone-screen">
+            
+            <!-- App Header Bar -->
+            <header class="app-header">
+              <div class="header-left">
+                <button class="header-back-btn hidden" id="headerBackBtn" title="Go Back" onclick="window.goBack()">‹</button>
+                <span class="app-logo-emoji">🎨</span>
+                <span class="app-title-text" id="headerTitle" data-i18n="app_title">कला सेतु</span>
+              </div>
+              <div class="header-actions">
+                <button class="gem-badge-btn" id="headerGemBtn" title="Government e-Marketplace">
+                  🏛️ GeM
+                </button>
+                <div class="lang-segmented-control" id="headerLangControl">
+                  <button class="lang-seg-btn active" id="btnLangHi" data-lang="hi">🇮🇳 हिंदी</button>
+                  <button class="lang-seg-btn" id="btnLangEn" data-lang="en">🌐 English</button>
+                </div>
+                <button class="lang-toggle-btn" style="display:none;" id="langToggleBtn">
+                  <span id="langToggleText">English</span>
+                </button>
+              </div>
+            </header>
+
+            <!-- Dynamic Screen Container -->
+            <main class="app-main-content">
               
-              <div class="lang-card active" data-lang="hi" id="langCardHi">
-                <span class="lang-flag">🇮🇳</span>
-                <div class="lang-info">
-                  <h4 data-i18n="lang_card_hi_title">हिंदी</h4>
-                  <p data-i18n="lang_card_hi_sub">अपनी मातृभाषा में बोलकर उत्पाद दर्ज करें</p>
+              <!-- Screen 1: Language Selection -->
+              <section id="screen-language" class="app-screen active">
+                <div class="brand-hero">
+                  <div class="hero-logo-box">🎨</div>
+                  <h1 class="brand-name">kalaSetu</h1>
+                  <p class="brand-tagline" data-i18n="tagline">हस्तशिल्पियों का डिजिटल व्यापार साथी</p>
+                  <p class="brand-sub" data-i18n="tagline_sub">भारतीय कारीगरों के लिए AI वर्चुअल बिजनेस मैनेजर</p>
                 </div>
-                <span class="check-radio">✓</span>
-              </div>
 
-              <div class="lang-card" data-lang="en" id="langCardEn">
-                <span class="lang-flag">🌐</span>
-                <div class="lang-info">
-                  <h4 data-i18n="lang_card_en_title">English</h4>
-                  <p data-i18n="lang_card_en_sub">अंग्रेजी भाषा में टूल्स और बोलकर कैटलॉग बनाएं</p>
+                <div class="lang-selection-box">
+                  <h3 class="section-title" data-i18n="select_language">अपनी पसंदीदा भाषा चुनें</h3>
+                  
+                  <div class="lang-card active" data-lang="hi" id="langCardHi">
+                    <span class="lang-flag">🇮🇳</span>
+                    <div class="lang-info">
+                      <h4 data-i18n="lang_card_hi_title">हिंदी</h4>
+                      <p data-i18n="lang_card_hi_sub">अपनी मातृभाषा में बोलकर उत्पाद दर्ज करें</p>
+                    </div>
+                    <span class="check-radio">✓</span>
+                  </div>
+
+                  <div class="lang-card" data-lang="en" id="langCardEn">
+                    <span class="lang-flag">🌐</span>
+                    <div class="lang-info">
+                      <h4 data-i18n="lang_card_en_title">English</h4>
+                      <p data-i18n="lang_card_en_sub">अंग्रेजी भाषा में टूल्स और बोलकर कैटलॉग बनाएं</p>
+                    </div>
+                    <span class="check-radio"></span>
+                  </div>
                 </div>
-                <span class="check-radio"></span>
-              </div>
-            </div>
 
-            <div class="action-footer">
-              <button class="btn-primary" id="btnContinueLanguage">
-                <span class="btn-text" data-i18n="continue">आगे बढ़ें</span>
-                <span class="btn-icon">➔</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- Screen 2: Phone & OTP Auth -->
-          <section id="screen-auth" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" id="authTitle" data-i18n="auth_title">मोबाइल नंबर दर्ज करें</h2>
-              <p class="screen-subtitle" id="authSubtitle" data-i18n="auth_sub">अपने हस्तशिल्प को डिजिटाइज़ करें और सीधे खरीदारों को बेचें</p>
-            </div>
-
-            <div class="form-group" id="groupPhone">
-              <label class="form-label" data-i18n="phone_number">मोबाइल नंबर</label>
-              <div class="phone-input-row">
-                <span class="phone-prefix">🇮🇳 +91</span>
-                <input type="tel" id="inputPhone" value="9876543210" maxlength="10" placeholder="10-digit number" />
-              </div>
-              <button class="btn-primary mt-3" id="btnRequestOtp">
-                <span class="btn-text" data-i18n="send_otp">एसएमएस द्वारा ओटीपी भेजें</span>
-              </button>
-              <button class="btn-text-only mt-2" id="btnBackToLang" data-i18n="btn_back_lang" onclick="window.goBack()">‹ भाषा चयन पर वापस जाएं</button>
-            </div>
-
-            <div class="form-group hidden" id="groupOtp">
-              <label class="form-label" data-i18n="enter_otp">ओटीपी कोड दर्ज करें</label>
-              <input type="text" id="inputOtp" class="otp-input" value="123456" maxlength="6" />
-              <div class="demo-otp-badge" data-i18n="demo_otp_badge">
-                💡 डेमो कोड: <strong>123456</strong>
-              </div>
-              <button class="btn-primary mt-3" id="btnVerifyOtp">
-                <span class="btn-text" data-i18n="verify_otp">सत्यापित करें और शुरू करें</span>
-              </button>
-              <button class="btn-text-only mt-2" id="btnChangePhone" data-i18n="change_phone">नंबर बदलें</button>
-            </div>
-          </section>
-
-          <!-- Screen 3: Artisan Profile Setup -->
-          <section id="screen-profile" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" data-i18n="profile_title">शिल्पी प्रोफाइल</h2>
-              <p class="screen-subtitle" data-i18n="profile_sub">अपनी कला और क्षेत्र का विवरण दें</p>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" data-i18n="artisan_name">आपका नाम</label>
-              <input type="text" id="inputArtisanName" value="Radha Devi (राधा देवी)" class="text-input" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" data-i18n="craft_type">शिल्प प्रकार चुनें</label>
-              <div class="craft-chip-grid" id="craftChipGrid">
-                <div class="craft-chip active" data-craft="Textiles" data-i18n="craft_textiles">🧵 हथकरघा</div>
-                <div class="craft-chip" data-craft="Pottery" data-i18n="craft_pottery">🏺 मिट्टी के बर्तन</div>
-                <div class="craft-chip" data-craft="Woodcraft" data-i18n="craft_woodcraft">🪵 काष्ठ कला</div>
-                <div class="craft-chip" data-craft="Metal" data-i18n="craft_metal">🔔 ढोकरा/धातु</div>
-                <div class="craft-chip" data-craft="Paintings" data-i18n="craft_paintings">🎨 लोक चित्रकला</div>
-                <div class="craft-chip" data-craft="Leather" data-i18n="craft_leather">👡 चमड़ा शिल्प</div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" data-i18n="location">स्थान (शहर / गाँव व राज्य)</label>
-              <input type="text" id="inputArtisanLocation" value="Varanasi, Uttar Pradesh" class="text-input" />
-            </div>
-
-            <div class="action-footer">
-              <button class="btn-primary" id="btnSaveProfile">
-                <span class="btn-text" data-i18n="enter_studio">बिजनेस स्टूडियो में प्रवेश करें</span>
-              </button>
-              <button class="btn-outline mt-2" id="btnBackFromProfile" data-i18n="btn_back" onclick="window.goBack()">‹ पीछे जाएं</button>
-            </div>
-          </section>
-
-          <!-- Screen 4: Home Catalog & Business Hub -->
-          <section id="screen-home" class="app-screen">
-            <!-- Business Stats Card -->
-            <div class="dashboard-hero-card">
-              <div class="dash-card-header">
-                <span data-i18n="dash_title">📊 व्यापार डैशबोर्ड</span>
-                <span class="gem-mini-tag" id="dashGemTag" data-i18n="gem_active">🏛️ GeM Active</span>
-              </div>
-              <div class="stats-row">
-                <div class="stat-col">
-                  <span class="stat-num" id="statProductCount">4</span>
-                  <span class="stat-lbl" data-i18n="stat_crafts">कलाकृतियाँ</span>
+                <div class="action-footer">
+                  <button class="btn-primary" id="btnContinueLanguage">
+                    <span class="btn-text" data-i18n="continue">आगे बढ़ें</span>
+                    <span class="btn-icon">➔</span>
+                  </button>
                 </div>
-                <div class="stat-col">
-                  <span class="stat-num">231</span>
-                  <span class="stat-lbl" data-i18n="stat_views">देखी गईं</span>
+              </section>
+
+              <!-- Screen 2: Phone & OTP Auth -->
+              <section id="screen-auth" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" id="authTitle" data-i18n="auth_title">मोबाइल नंबर दर्ज करें</h2>
+                  <p class="screen-subtitle" id="authSubtitle" data-i18n="auth_sub">अपने हस्तशिल्प को डिजिटाइज़ करें और सीधे खरीदारों को बेचें</p>
                 </div>
-                <div class="stat-col">
-                  <span class="stat-num">4</span>
-                  <span class="stat-lbl" data-i18n="stat_orders">ऑर्डर/पूछताछ</span>
+
+                <div class="form-group" id="groupPhone">
+                  <label class="form-label" data-i18n="phone_number">मोबाइल नंबर</label>
+                  <div class="phone-input-row">
+                    <span class="phone-prefix">🇮🇳 +91</span>
+                    <input type="tel" id="inputPhone" value="9876543210" maxlength="10" placeholder="10-digit number" />
+                  </div>
+                  <button class="btn-primary mt-3" id="btnRequestOtp">
+                    <span class="btn-text" data-i18n="send_otp">एसएमएस द्वारा ओटीपी भेजें</span>
+                  </button>
+                  <button class="btn-text-only mt-2" id="btnBackToLang" data-i18n="btn_back_lang" onclick="window.goBack()">‹ भाषा चयन पर वापस जाएं</button>
                 </div>
-              </div>
-            </div>
 
-            <!-- Filter Tabs -->
-            <div class="filter-tabs-row">
-              <button class="tab-btn active" data-filter="all" data-i18n="filter_all">सभी</button>
-              <button class="tab-btn" data-filter="pottery" data-i18n="filter_pottery">🏺 मिट्टी के बर्तन</button>
-              <button class="tab-btn" data-filter="fiber" data-i18n="filter_fiber">🌾 चटाई व रेशे</button>
-              <button class="tab-btn" data-filter="cottage" data-i18n="filter_cottage">🧺 कुटीर शिल्प</button>
-              <button class="tab-btn" data-filter="paintings" data-i18n="filter_paintings">🎨 चित्रकला</button>
-              <button class="tab-btn" data-filter="textiles" data-i18n="filter_textiles">🧵 हथकरघा</button>
-            </div>
-
-            <!-- Product Grid -->
-            <div class="products-grid-container" id="productsGrid">
-              <!-- Dynamically populated -->
-            </div>
-
-            <!-- Bottom Floating Action Bar -->
-            <div class="floating-bottom-bar">
-              <button class="btn-fab" id="btnStartDigitize">
-                <span class="fab-icon">📷</span>
-                <span class="fab-label" data-i18n="btn_digitize">नया शिल्प जोड़ें</span>
-              </button>
-            </div>
-          </section>
-
-          <!-- Screen 5: Camera Viewfinder with Centering Guide -->
-          <section id="screen-camera" class="app-screen camera-screen-bg">
-            <div class="camera-top-bar">
-              <button class="btn-cam-nav" id="btnBackFromCam">✕</button>
-              <span class="cam-title" data-i18n="cam_title">शिल्प की तस्वीर लें</span>
-              <span class="cam-flash">⚡</span>
-            </div>
-
-            <div class="viewfinder-box">
-              <div class="guide-box">
-                <div class="guide-corner top-left"></div>
-                <div class="guide-corner top-right"></div>
-                <div class="guide-corner bottom-left"></div>
-                <div class="guide-corner bottom-right"></div>
-                <div class="subject-silhouette">🧵</div>
-              </div>
-              <p class="guide-caption" data-i18n="cam_caption">उत्पाद को गाइड बॉक्स के बीच में रखें</p>
-            </div>
-
-            <!-- Quick Sample Craft Strip -->
-            <div class="craft-quick-strip">
-              <button class="craft-chip-btn" id="btnSamplePot" title="Terracotta Clay Pot">
-                <span class="chip-icon">🏺</span>
-                <span class="chip-name" data-i18n="sample_pot">मिट्टी का मटका</span>
-              </button>
-              <button class="craft-chip-btn" id="btnSampleClay" title="Clay Tea Kulhad & Pots">
-                <span class="chip-icon">☕</span>
-                <span class="chip-name" data-i18n="sample_clay">कुल्हड़ व पात्र</span>
-              </button>
-              <button class="craft-chip-btn" id="btnSampleMat" title="River Grass Floor Mat">
-                <span class="chip-icon">🌾</span>
-                <span class="chip-name" data-i18n="sample_mat">मादुर चटाई</span>
-              </button>
-              <button class="craft-chip-btn" id="btnSampleCottage" title="Cottage Cane Basket">
-                <span class="chip-icon">🧺</span>
-                <span class="chip-name" data-i18n="sample_cottage">कुटीर टोकरी</span>
-              </button>
-              <button class="craft-chip-btn" id="btnSampleSnap" title="Banarasi Silk Dupatta">
-                <span class="chip-icon">🧵</span>
-                <span class="chip-name" data-i18n="sample_textile">सिल्क दुपट्टा</span>
-              </button>
-              <button class="craft-chip-btn" id="btnSamplePaintingSnap" title="Madhubani Folk Painting">
-                <span class="chip-icon">🎨</span>
-                <span class="chip-name" data-i18n="sample_painting">मधुबनी पेंटिंग</span>
-              </button>
-            </div>
-
-            <div class="camera-bottom-controls">
-              <label class="btn-gallery-upload" title="Upload from Device">
-                📁
-                <input type="file" id="fileImagePicker" accept="image/*" style="display: none;" />
-              </label>
-
-              <button class="btn-shutter" id="btnShutter" title="Take Photo">
-                <div class="shutter-inner"></div>
-              </button>
-
-              <button class="btn-cam-switch" id="btnCycleSample" title="Next Sample Craft">
-                🔄
-              </button>
-            </div>
-          </section>
-
-          <!-- Screen 6: AI Studio Before / After Enhancer -->
-          <section id="screen-enhancer" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" data-i18n="enhancer_title">✨ AI स्टूडियो सुधार</h2>
-              <p class="screen-subtitle" data-i18n="enhancer_sub">जेमिनी AI ने पृष्ठभूमि साफ की और प्रकाश संतुलित किया</p>
-            </div>
-
-            <!-- Before/After Visual Slider Container -->
-            <div class="comparison-container" id="comparisonBox">
-              <div class="comp-image-before">
-                <img id="imgRaw" src="/uploads/sample_raw_1.svg" alt="Raw photo" />
-                <span class="comp-badge before-badge" data-i18n="badge_raw">📷 मूल फोटो</span>
-              </div>
-              <div class="comp-image-after" id="compAfter">
-                <img id="imgEnhanced" src="/uploads/sample_enhanced_1.svg" alt="AI Enhanced" />
-                <span class="comp-badge after-badge" data-i18n="badge_enhanced">✨ AI स्टूडियो</span>
-              </div>
-              <div class="slider-divider-line" id="sliderDividerLine">
-                <div class="slider-handle-pill">◂ ▸</div>
-              </div>
-              <input type="range" min="0" max="100" value="50" class="slider-bar" id="compareSlider" />
-            </div>
-
-            <!-- Insights Card -->
-            <div class="insights-box">
-              <h4 data-i18n="insights_title">🔍 जेमिनी AI स्टूडियो सुधार:</h4>
-              <ul>
-                <li data-i18n="insight_bg">✓ <strong>पृष्ठभूमि:</strong> अव्यवस्था हटाकर स्टूडियो सफेद रंग लगाया</li>
-                <li data-i18n="insight_light">✓ <strong>रोशनी:</strong> प्राकृतिक रंग और चमक को निखारा</li>
-                <li data-i18n="insight_frame">✓ <strong>आकार:</strong> 1:1 ई-कॉमर्स मानक फ्रेमिंग</li>
-              </ul>
-            </div>
-
-            <div class="action-footer">
-              <button class="btn-primary" id="btnAcceptEnhanced">
-                <span class="btn-text" data-i18n="use_enhanced">यह स्टूडियो फोटो चुनें</span>
-                <span class="btn-icon">➔</span>
-              </button>
-              <button class="btn-outline mt-2" id="btnRetakePhoto" data-i18n="retake_photo">दोबारा तस्वीर लें</button>
-            </div>
-          </section>
-
-          <!-- Screen 7: Voice Auto-Cataloger (Voice-First) -->
-          <section id="screen-voice" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" data-i18n="voice_title">🎙️ बोलकर बताएं</h2>
-              <p class="screen-subtitle" data-i18n="voice_sub">माइक दबाएं और अपनी भाषा में उत्पाद के बारे में बताएं</p>
-            </div>
-
-            <div class="mic-stage">
-              <div class="mic-timer" id="micTimer">00:00</div>
-              <button class="big-mic-btn" id="btnBigMic">
-                <span class="mic-icon">🎙️</span>
-              </button>
-              <p class="mic-hint" id="micPromptText" data-i18n="tap_speak">बोलने के लिए माइक दबाएं</p>
-
-              <!-- Live Audio Transcript Bubble -->
-              <div class="live-transcript-box hidden" id="liveTranscriptBox">
-                <div class="live-pulse-dot"></div>
-                <div class="live-transcript-content">
-                  <span class="live-transcript-lbl" data-i18n="listening_live">लाइव आवाज़ पहचानी जा रही है...</span>
-                  <p class="live-transcript-text" id="liveTranscriptText">...</p>
+                <div class="form-group hidden" id="groupOtp">
+                  <label class="form-label" data-i18n="enter_otp">ओटीपी कोड दर्ज करें</label>
+                  <input type="text" id="inputOtp" class="otp-input" value="123456" maxlength="6" />
+                  <div class="demo-otp-badge" data-i18n="demo_otp_badge">
+                    💡 डेमो कोड: <strong>123456</strong>
+                  </div>
+                  <button class="btn-primary mt-3" id="btnVerifyOtp">
+                    <span class="btn-text" data-i18n="verify_otp">सत्यापित करें और शुरू करें</span>
+                  </button>
+                  <button class="btn-text-only mt-2" id="btnChangePhone" data-i18n="change_phone">नंबर बदलें</button>
                 </div>
-              </div>
+              </section>
+
+              <!-- Screen 3: Artisan Profile Setup -->
+              <section id="screen-profile" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" data-i18n="profile_title">शिल्पी प्रोफाइल</h2>
+                  <p class="screen-subtitle" data-i18n="profile_sub">अपनी कला और क्षेत्र का विवरण दें</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan_name">आपका नाम</label>
+                  <input type="text" id="inputArtisanName" value="Radha Devi (राधा देवी)" class="text-input" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="craft_type">शिल्प प्रकार चुनें</label>
+                  <div class="craft-chip-grid" id="craftChipGrid">
+                    <div class="craft-chip active" data-craft="Textiles" data-i18n="craft_textiles">🧵 हथकरघा</div>
+                    <div class="craft-chip" data-craft="Pottery" data-i18n="craft_pottery">🏺 मिट्टी के बर्तन</div>
+                    <div class="craft-chip" data-craft="Woodcraft" data-i18n="craft_woodcraft">🪵 काष्ठ कला</div>
+                    <div class="craft-chip" data-craft="Metal" data-i18n="craft_metal">🔔 ढोकरा/धातु</div>
+                    <div class="craft-chip" data-craft="Paintings" data-i18n="craft_paintings">🎨 लोक चित्रकला</div>
+                    <div class="craft-chip" data-craft="Leather" data-i18n="craft_leather">👡 चमड़ा शिल्प</div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="location">स्थान (शहर / गाँव व राज्य)</label>
+                  <input type="text" id="inputArtisanLocation" value="Varanasi, Uttar Pradesh" class="text-input" />
+                </div>
+
+                <div class="action-footer">
+                  <button class="btn-primary" id="btnSaveProfile">
+                    <span class="btn-text" data-i18n="enter_studio">बिजनेस स्टूडियो में प्रवेश करें</span>
+                  </button>
+                  <button class="btn-outline mt-2" id="btnBackFromProfile" data-i18n="btn_back" onclick="window.goBack()">‹ पीछे जाएं</button>
+                </div>
+              </section>
+
+              <!-- Screen 4: Home Catalog & Business Hub -->
+              <section id="screen-home" class="app-screen">
+                <!-- Business Stats Card -->
+                <div class="dashboard-hero-card">
+                  <div class="dash-card-header">
+                    <span data-i18n="dash_title">📊 व्यापार डैशबोर्ड</span>
+                    <span class="gem-mini-tag" id="dashGemTag" data-i18n="gem_active">🏛️ GeM Active</span>
+                  </div>
+                  <div class="stats-row">
+                    <div class="stat-col">
+                      <span class="stat-num" id="statProductCount">4</span>
+                      <span class="stat-lbl" data-i18n="stat_crafts">कलाकृतियाँ</span>
+                    </div>
+                    <div class="stat-col">
+                      <span class="stat-num">231</span>
+                      <span class="stat-lbl" data-i18n="stat_views">देखी गईं</span>
+                    </div>
+                    <div class="stat-col">
+                      <span class="stat-num">4</span>
+                      <span class="stat-lbl" data-i18n="stat_orders">ऑर्डर/पूछताछ</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="filter-tabs-row">
+                  <button class="tab-btn active" data-filter="all" data-i18n="filter_all">सभी</button>
+                  <button class="tab-btn" data-filter="pottery" data-i18n="filter_pottery">🏺 मिट्टी के बर्तन</button>
+                  <button class="tab-btn" data-filter="fiber" data-i18n="filter_fiber">🌾 चटाई व रेशे</button>
+                  <button class="tab-btn" data-filter="cottage" data-i18n="filter_cottage">🧺 कुटीर शिल्प</button>
+                  <button class="tab-btn" data-filter="paintings" data-i18n="filter_paintings">🎨 चित्रकला</button>
+                  <button class="tab-btn" data-filter="textiles" data-i18n="filter_textiles">🧵 हथकरघा</button>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="products-grid-container" id="productsGrid">
+                  <!-- Dynamically populated -->
+                </div>
+
+                <!-- Bottom Floating Action Bar -->
+                <div class="floating-bottom-bar">
+                  <button class="btn-fab" id="btnStartDigitize">
+                    <span class="fab-icon">📷</span>
+                    <span class="fab-label" data-i18n="btn_digitize">नया शिल्प जोड़ें</span>
+                  </button>
+                </div>
+              </section>
+
+              <!-- Screen 5: Camera Viewfinder with Centering Guide -->
+              <section id="screen-camera" class="app-screen camera-screen-bg">
+                <div class="camera-top-bar">
+                  <button class="btn-cam-nav" id="btnBackFromCam">✕</button>
+                  <span class="cam-title" data-i18n="cam_title">शिल्प की तस्वीर लें</span>
+                  <span class="cam-flash">⚡</span>
+                </div>
+
+                <div class="viewfinder-box">
+                  <div class="guide-box">
+                    <div class="guide-corner top-left"></div>
+                    <div class="guide-corner top-right"></div>
+                    <div class="guide-corner bottom-left"></div>
+                    <div class="guide-corner bottom-right"></div>
+                    <div class="subject-silhouette">🧵</div>
+                  </div>
+                  <p class="guide-caption" data-i18n="cam_caption">उत्पाद को गाइड बॉक्स के बीच में रखें</p>
+                </div>
+
+                <!-- Quick Sample Craft Strip -->
+                <div class="craft-quick-strip">
+                  <button class="craft-chip-btn" id="btnSamplePot" title="Terracotta Clay Pot">
+                    <span class="chip-icon">🏺</span>
+                    <span class="chip-name" data-i18n="sample_pot">मिट्टी का मटका</span>
+                  </button>
+                  <button class="craft-chip-btn" id="btnSampleClay" title="Clay Tea Kulhad & Pots">
+                    <span class="chip-icon">☕</span>
+                    <span class="chip-name" data-i18n="sample_clay">कुल्हड़ व पात्र</span>
+                  </button>
+                  <button class="craft-chip-btn" id="btnSampleMat" title="River Grass Floor Mat">
+                    <span class="chip-icon">🌾</span>
+                    <span class="chip-name" data-i18n="sample_mat">मादुर चटाई</span>
+                  </button>
+                  <button class="craft-chip-btn" id="btnSampleCottage" title="Cottage Cane Basket">
+                    <span class="chip-icon">🧺</span>
+                    <span class="chip-name" data-i18n="sample_cottage">कुटीर टोकरी</span>
+                  </button>
+                  <button class="craft-chip-btn" id="btnSampleSnap" title="Banarasi Silk Dupatta">
+                    <span class="chip-icon">🧵</span>
+                    <span class="chip-name" data-i18n="sample_textile">सिल्क दुपट्टा</span>
+                  </button>
+                  <button class="craft-chip-btn" id="btnSamplePaintingSnap" title="Madhubani Folk Painting">
+                    <span class="chip-icon">🎨</span>
+                    <span class="chip-name" data-i18n="sample_painting">मधुबनी पेंटिंग</span>
+                  </button>
+                </div>
+
+                <div class="camera-bottom-controls">
+                  <label class="btn-gallery-upload" title="Upload from Device">
+                    📁
+                    <input type="file" id="fileImagePicker" accept="image/*" style="display: none;" />
+                  </label>
+
+                  <button class="btn-shutter" id="btnShutter" title="Take Photo">
+                    <div class="shutter-inner"></div>
+                  </button>
+
+                  <button class="btn-cam-switch" id="btnCycleSample" title="Next Sample Craft">
+                    🔄
+                  </button>
+                </div>
+              </section>
+
+              <!-- Screen 6: AI Studio Before / After Enhancer -->
+              <section id="screen-enhancer" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" data-i18n="enhancer_title">✨ AI स्टूडियो सुधार</h2>
+                  <p class="screen-subtitle" data-i18n="enhancer_sub">जेमिनी AI ने पृष्ठभूमि साफ की और प्रकाश संतुलित किया</p>
+                </div>
+
+                <!-- Before/After Visual Slider Container -->
+                <div class="comparison-container" id="comparisonBox">
+                  <div class="comp-image-before">
+                    <img id="imgRaw" src="/uploads/sample_raw_1.svg" alt="Raw photo" />
+                    <span class="comp-badge before-badge" data-i18n="badge_raw">📷 मूल फोटो</span>
+                  </div>
+                  <div class="comp-image-after" id="compAfter">
+                    <img id="imgEnhanced" src="/uploads/sample_enhanced_1.svg" alt="AI Enhanced" />
+                    <span class="comp-badge after-badge" data-i18n="badge_enhanced">✨ AI स्टूडियो</span>
+                  </div>
+                  <div class="slider-divider-line" id="sliderDividerLine">
+                    <div class="slider-handle-pill">◂ ▸</div>
+                  </div>
+                  <input type="range" min="0" max="100" value="50" class="slider-bar" id="compareSlider" />
+                </div>
+
+                <!-- Insights Card -->
+                <div class="insights-box">
+                  <h4 data-i18n="insights_title">🔍 जेमिनी AI स्टूडियो सुधार:</h4>
+                  <ul>
+                    <li data-i18n="insight_bg">✓ <strong>पृष्ठभूमि:</strong> अव्यवस्था हटाकर स्टूडियो सफेद रंग लगाया</li>
+                    <li data-i18n="insight_light">✓ <strong>रोशनी:</strong> प्राकृतिक रंग और चमक को निखारा</li>
+                    <li data-i18n="insight_frame">✓ <strong>आकार:</strong> 1:1 ई-कॉमर्स मानक फ्रेमिंग</li>
+                  </ul>
+                </div>
+
+                <div class="action-footer">
+                  <button class="btn-primary" id="btnAcceptEnhanced">
+                    <span class="btn-text" data-i18n="use_enhanced">यह स्टूडियो फोटो चुनें</span>
+                    <span class="btn-icon">➔</span>
+                  </button>
+                  <button class="btn-outline mt-2" id="btnRetakePhoto" data-i18n="retake_photo">दोबारा तस्वीर लें</button>
+                </div>
+              </section>
+
+              <!-- Screen 7: Voice Auto-Cataloger (Voice-First) -->
+              <section id="screen-voice" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" data-i18n="voice_title">🎙️ बोलकर बताएं</h2>
+                  <p class="screen-subtitle" data-i18n="voice_sub">माइक दबाएं और अपनी भाषा में उत्पाद के बारे में बताएं</p>
+                </div>
+
+                <div class="mic-stage">
+                  <div class="mic-timer" id="micTimer">00:00</div>
+                  <button class="big-mic-btn" id="btnBigMic">
+                    <span class="mic-icon">🎙️</span>
+                  </button>
+                  <p class="mic-hint" id="micPromptText" data-i18n="tap_speak">बोलने के लिए माइक दबाएं</p>
+
+                  <!-- Live Audio Transcript Bubble -->
+                  <div class="live-transcript-box hidden" id="liveTranscriptBox">
+                    <div class="live-pulse-dot"></div>
+                    <div class="live-transcript-content">
+                      <span class="live-transcript-lbl" data-i18n="listening_live">लाइव आवाज़ पहचानी जा रही है...</span>
+                      <p class="live-transcript-text" id="liveTranscriptText">...</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="processing-overlay hidden" id="voiceProcessingBox">
+                  <div class="spinner"></div>
+                  <h4 data-i18n="voice_proc_title">जेमिनी AI विवरण तैयार कर रहा है...</h4>
+                  <p data-i18n="voice_proc_sub">आवाज समझकर आकर्षक विवरण तैयार हो रहा है</p>
+                </div>
+
+                <div class="action-footer">
+                  <button class="btn-outline" id="btnDemoVoice">
+                    <span data-i18n="load_demo_voice">✨ नमूना आवाज विवरण लोड करें</span>
+                  </button>
+                  <button class="btn-outline mt-2" id="btnBackFromVoice" data-i18n="btn_back" onclick="window.goBack()">‹ पीछे जाएं</button>
+                </div>
+              </section>
+
+              <!-- Screen 8: Catalog Review Screen -->
+              <section id="screen-review" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" data-i18n="review_title">📝 विवरण की समीक्षा करें</h2>
+                  <p class="screen-subtitle" data-i18n="review_sub">AI द्वारा तैयार शीर्षक व विवरण देखें या संपादित करें</p>
+                </div>
+
+                <!-- User Recorded Spoken Voice Display -->
+                <div class="user-transcript-banner" id="userTranscriptBanner">
+                  <span class="transcript-mic-tag">🎙️ <strong data-i18n="your_voice">आपकी आवाज़:</strong></span>
+                  <p class="transcript-spoken-words" id="spokenTranscriptWords">"शुद्ध शहतूत रेशम पर हाथ से बुना पारंपरिक दुपट्टा..."</p>
+                </div>
+
+                <!-- Literacy-friendly TTS Read-back Banner -->
+                <div class="tts-banner" id="btnPlayTts">
+                  <span class="tts-icon">🔊</span>
+                  <div class="tts-info">
+                    <strong data-i18n="tts_title">विवरण को आवाज में सुनें</strong>
+                    <p data-i18n="tts_sub">ऑडियो सुनने के लिए यहाँ टैप करें</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="lbl_title_hi">शीर्षक - हिंदी</label>
+                  <input type="text" id="reviewTitleHi" class="text-input" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="lbl_title_en">शीर्षक - English</label>
+                  <input type="text" id="reviewTitleEn" class="text-input" />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="lbl_desc_hi">शिल्प कथा - हिंदी</label>
+                  <textarea id="reviewDescHi" rows="3" class="text-input"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" data-i18n="lbl_desc_en">Product Story - English</label>
+                  <textarea id="reviewDescEn" rows="3" class="text-input"></textarea>
+                </div>
+
+                <div class="action-footer">
+                  <button class="btn-primary" id="btnGoToPricing">
+                    <span class="btn-text" data-i18n="goto_pricing">अगला: सही मूल्य निर्धारण</span>
+                    <span class="btn-icon">➔</span>
+                  </button>
+                  <button class="btn-outline mt-2" id="btnBackFromReview" data-i18n="btn_back_rerecord" onclick="window.goBack()">‹ दोबारा बोलें / पीछे जाएं</button>
+                </div>
+              </section>
+
+              <!-- Screen 9: Dynamic Pricing Assistant -->
+              <section id="screen-pricing" class="app-screen">
+                <div class="screen-header">
+                  <h2 class="screen-title" data-i18n="pricing_title">⚖️ AI सही मूल्य निर्धारण</h2>
+                  <p class="screen-subtitle" data-i18n="pricing_sub">लागत, समय और बाजार भाव के आधार पर उचित मूल्य</p>
+                </div>
+
+                <!-- Cost Inputs -->
+                <div class="pricing-input-box">
+                  <label class="form-label" data-i18n="mat_cost">कच्चे माल का खर्च</label>
+                  <div class="counter-row">
+                    <button class="btn-counter" id="btnMatMinus">- ₹50</button>
+                    <span class="counter-val" id="valMaterialCost">₹350</span>
+                    <button class="btn-counter" id="btnMatPlus">+ ₹50</button>
+                  </div>
+                </div>
+
+                <div class="pricing-input-box mt-3">
+                  <label class="form-label" data-i18n="hours_spent">हाथ से बनाने में लगे घंटे</label>
+                  <div class="counter-row">
+                    <button class="btn-counter" id="btnHoursMinus">- 1 hr</button>
+                    <span class="counter-val" id="valHoursSpent">6 घंटे</span>
+                    <button class="btn-counter" id="btnHoursPlus">+ 1 hr</button>
+                  </div>
+                </div>
+
+                <!-- AI Suggested Price Box -->
+                <div class="pricing-result-card" id="pricingResultCard">
+                  <div class="result-header">
+                    <span data-i18n="ai_price_header">✨ जेमिनी AI अनुशंसित मूल्य</span>
+                    <span class="fair-badge" data-i18n="fair_badge">Fair Trade Certified</span>
+                  </div>
+                  <div class="price-display" id="displaySuggestedPrice">₹950</div>
+                  <div class="market-range" id="displayMarketRange"><span data-i18n="market_range_prefix">बाजार बिक्री दायरा:</span> ₹850 – ₹1,200</div>
+                  <div class="justification-text" id="displayJustification">
+                    बाजार में ऐसे उत्पाद ₹850–1200 में बिकते हैं। आपकी सामग्री लागत (₹350) और 6 घंटे के श्रम के अनुसार ₹950 उचित मूल्य है।
+                  </div>
+
+                  <div class="slider-adjust-row">
+                    <span data-i18n="adjust_price_lbl">मूल्य समायोजन:</span>
+                    <strong id="sliderPriceLabel">₹950</strong>
+                  </div>
+                  <input type="range" id="priceAdjustSlider" min="500" max="2500" step="50" value="950" />
+                </div>
+
+                <div class="action-footer">
+                  <button class="btn-primary" id="btnPublishProduct">
+                    <span class="btn-icon">🏪</span>
+                    <span class="btn-text" data-i18n="publish">कैटलॉग में प्रकाशित करें</span>
+                  </button>
+                  <button class="btn-whatsapp mt-2" id="btnShareWhatsApp">
+                    <span class="btn-icon">💬</span>
+                    <span class="btn-text" data-i18n="share_whatsapp">व्हाट्सएप पर शेयर करें (WhatsApp)</span>
+                  </button>
+                  <button class="btn-outline mt-2" id="btnSaveDraft" data-i18n="save_draft">ड्राफ्ट के रूप में सहेजें</button>
+                  <button class="btn-text-only mt-2" id="btnBackFromPricing" data-i18n="btn_back_pricing" onclick="window.goBack()">‹ विवरण की समीक्षा पर वापस जाएं</button>
+                </div>
+              </section>
+
+            </main>
+          </div>
+        </div>
+
+        <!-- Right: SIH Live Architecture & API Demo Guide -->
+        <div class="guide-panel">
+          <div class="panel-card hero-guide">
+            <h3>🇮🇳 Smart India Hackathon (SIH) Prototype</h3>
+            <p><strong>kalaSetu</strong>: AI-powered "virtual business manager" for marginalized artisans, weavers, and micro-entrepreneurs in India.</p>
+          </div>
+
+          <!-- Live Backend & API Inspector -->
+          <div class="panel-card">
+            <h4>⚡ Live API & System Status</h4>
+            <div class="status-indicator">
+              <span class="pulse-dot"></span> Backend: <strong>Connected (Node.js/Express)</strong>
             </div>
-
-            <div class="processing-overlay hidden" id="voiceProcessingBox">
-              <div class="spinner"></div>
-              <h4 data-i18n="voice_proc_title">जेमिनी AI विवरण तैयार कर रहा है...</h4>
-              <p data-i18n="voice_proc_sub">आवाज समझकर आकर्षक विवरण तैयार हो रहा है</p>
+            <div class="status-indicator">
+              <span class="pulse-dot"></span> Database: <strong>PostgreSQL / Hybrid Storage Ready</strong>
             </div>
-
-            <div class="action-footer">
-              <button class="btn-outline" id="btnDemoVoice">
-                <span data-i18n="load_demo_voice">✨ नमूना आवाज विवरण लोड करें</span>
-              </button>
-              <button class="btn-outline mt-2" id="btnBackFromVoice" data-i18n="btn_back" onclick="window.goBack()">‹ पीछे जाएं</button>
+            <div class="status-indicator">
+              <span class="pulse-dot"></span> AI Engine: <strong>Google Gemini Multimodal</strong>
             </div>
-          </section>
-
-          <!-- Screen 8: Catalog Review Screen -->
-          <section id="screen-review" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" data-i18n="review_title">📝 विवरण की समीक्षा करें</h2>
-              <p class="screen-subtitle" data-i18n="review_sub">AI द्वारा तैयार शीर्षक व विवरण देखें या संपादित करें</p>
+            <div class="status-indicator">
+              <span class="pulse-dot"></span> Seeded Comparables: <strong>35+ Indian Crafts in DB</strong>
             </div>
+          </div>
 
-            <!-- User Recorded Spoken Voice Display -->
-            <div class="user-transcript-banner" id="userTranscriptBanner">
-              <span class="transcript-mic-tag">🎙️ <strong data-i18n="your_voice">आपकी आवाज़:</strong></span>
-              <p class="transcript-spoken-words" id="spokenTranscriptWords">"शुद्ध शहतूत रेशम पर हाथ से बुना पारंपरिक दुपट्टा..."</p>
+          <!-- Quick Nav for Judges -->
+          <div class="panel-card">
+            <h4>🚀 Quick Jump for Judges / Evaluators</h4>
+            <div class="quick-nav-buttons">
+              <button class="btn-tag" onclick="window.navigateTo('screen-language')">1. Language Picker</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-auth')">2. Phone / OTP Auth</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-home')">3. Product Catalog</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-camera')">4. In-App Camera</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-enhancer')">5. AI Image Studio</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-voice')">6. Voice Cataloger</button>
+              <button class="btn-tag" onclick="window.navigateTo('screen-pricing')">7. Dynamic Pricing</button>
+              <button class="btn-tag" onclick="window.openGeMModal()">8. GeM / ODOP Sync</button>
+              <button class="btn-tag btn-highlight-tag" onclick="window.openWallVisualizer('/uploads/sample_painting_enhanced.jpg', 'Mithila Tree of Life (Madhubani)', '3450')">9. 🖼️ Wall Art Visualizer</button>
+              <button class="btn-tag btn-highlight-tag" onclick="window.openCoaModal('prod-painting-01')">10. 📜 Certificate of Authenticity</button>
+              <button class="btn-tag" onclick="window.selectCraftSample('pot')">🏺 Try: Terracotta Pot</button>
+              <button class="btn-tag" onclick="window.selectCraftSample('clay')">☕ Try: Clay Kulhad</button>
+              <button class="btn-tag" onclick="window.selectCraftSample('mat')">🌾 Try: River Grass Mat</button>
+              <button class="btn-tag" onclick="window.selectCraftSample('cottage')">🧺 Try: Cottage Basket</button>
             </div>
+          </div>
 
-            <!-- Literacy-friendly TTS Read-back Banner -->
-            <div class="tts-banner" id="btnPlayTts">
-              <span class="tts-icon">🔊</span>
-              <div class="tts-info">
-                <strong data-i18n="tts_title">विवरण को आवाज में सुनें</strong>
-                <p data-i18n="tts_sub">ऑडियो सुनने के लिए यहाँ टैप करें</p>
-              </div>
-            </div>
+          <!-- End-to-End Features Summary -->
+          <div class="panel-card">
+            <h4>🎯 Core SIH Principles Implemented</h4>
+            <ul class="guide-features-list">
+              <li><strong>Low-Digital-Literacy UX:</strong> Minimum 56px touch targets, icon-first, high contrast.</li>
+              <li><strong>Bilingual Architecture:</strong> Instant one-tap toggle between Hindi & English across all screens.</li>
+              <li><strong>Voice-First Workflow:</strong> Speech-to-text with Gemini + audio TTS readback.</li>
+              <li><strong>AI Studio Enhancer:</strong> Eliminates workshop clutter, balances lighting, 1:1 e-commerce ready.</li>
+              <li><strong>Fair-Trade Pricing Engine:</strong> Calculates fair living wage based on materials, labor hours & 35+ Indian handicraft benchmarks.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-            <div class="form-group">
-              <label class="form-label" data-i18n="lbl_title_hi">शीर्षक - हिंदी</label>
-              <input type="text" id="reviewTitleHi" class="text-input" />
-            </div>
+  </main>
 
-            <div class="form-group">
-              <label class="form-label" data-i18n="lbl_title_en">शीर्षक - English</label>
-              <input type="text" id="reviewTitleEn" class="text-input" />
-            </div>
+  <!-- ========================================================
+       SHOPPING CART DRAWER (Slide-out from Right)
+       ======================================================== -->
+  <div class="cart-drawer-overlay hidden" id="cartOverlay" onclick="window.closeCart()"></div>
+  <aside class="cart-drawer hidden" id="cartDrawer" aria-label="Shopping Cart">
+    <div class="cart-drawer-header">
+      <div class="cart-header-title">
+        <span class="cart-title-icon">🛒</span>
+        <div>
+          <h3 data-i18n="cart_drawer_title">आपकी टोकरी (Shopping Cart)</h3>
+          <p id="cartItemsSubtitle">0 वस्तुएँ</p>
+        </div>
+      </div>
+      <button class="btn-close-cart" id="btnCloseCart" onclick="window.closeCart()">✕</button>
+    </div>
 
-            <div class="form-group">
-              <label class="form-label" data-i18n="lbl_desc_hi">शिल्प कथा - हिंदी</label>
-              <textarea id="reviewDescHi" rows="3" class="text-input"></textarea>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" data-i18n="lbl_desc_en">Product Story - English</label>
-              <textarea id="reviewDescEn" rows="3" class="text-input"></textarea>
-            </div>
-
-            <div class="action-footer">
-              <button class="btn-primary" id="btnGoToPricing">
-                <span class="btn-text" data-i18n="goto_pricing">अगला: सही मूल्य निर्धारण</span>
-                <span class="btn-icon">➔</span>
-              </button>
-              <button class="btn-outline mt-2" id="btnBackFromReview" data-i18n="btn_back_rerecord" onclick="window.goBack()">‹ दोबारा बोलें / पीछे जाएं</button>
-            </div>
-          </section>
-
-          <!-- Screen 9: Dynamic Pricing Assistant -->
-          <section id="screen-pricing" class="app-screen">
-            <div class="screen-header">
-              <h2 class="screen-title" data-i18n="pricing_title">⚖️ AI सही मूल्य निर्धारण</h2>
-              <p class="screen-subtitle" data-i18n="pricing_sub">लागत, समय और बाजार भाव के आधार पर उचित मूल्य</p>
-            </div>
-
-            <!-- Cost Inputs -->
-            <div class="pricing-input-box">
-              <label class="form-label" data-i18n="mat_cost">कच्चे माल का खर्च</label>
-              <div class="counter-row">
-                <button class="btn-counter" id="btnMatMinus">- ₹50</button>
-                <span class="counter-val" id="valMaterialCost">₹350</span>
-                <button class="btn-counter" id="btnMatPlus">+ ₹50</button>
-              </div>
-            </div>
-
-            <div class="pricing-input-box mt-3">
-              <label class="form-label" data-i18n="hours_spent">हाथ से बनाने में लगे घंटे</label>
-              <div class="counter-row">
-                <button class="btn-counter" id="btnHoursMinus">- 1 hr</button>
-                <span class="counter-val" id="valHoursSpent">6 घंटे</span>
-                <button class="btn-counter" id="btnHoursPlus">+ 1 hr</button>
-              </div>
-            </div>
-
-            <!-- AI Suggested Price Box -->
-            <div class="pricing-result-card" id="pricingResultCard">
-              <div class="result-header">
-                <span data-i18n="ai_price_header">✨ जेमिनी AI अनुशंसित मूल्य</span>
-                <span class="fair-badge" data-i18n="fair_badge">Fair Trade Certified</span>
-              </div>
-              <div class="price-display" id="displaySuggestedPrice">₹950</div>
-              <div class="market-range" id="displayMarketRange"><span data-i18n="market_range_prefix">बाजार बिक्री दायरा:</span> ₹850 – ₹1,200</div>
-              <div class="justification-text" id="displayJustification">
-                बाजार में ऐसे उत्पाद ₹850–1200 में बिकते हैं। आपकी सामग्री लागत (₹350) और 6 घंटे के श्रम के अनुसार ₹950 उचित मूल्य है।
-              </div>
-
-              <div class="slider-adjust-row">
-                <span data-i18n="adjust_price_lbl">मूल्य समायोजन:</span>
-                <strong id="sliderPriceLabel">₹950</strong>
-              </div>
-              <input type="range" id="priceAdjustSlider" min="500" max="2500" step="50" value="950" />
-            </div>
-
-            <div class="action-footer">
-              <button class="btn-primary" id="btnPublishProduct">
-                <span class="btn-icon">🏪</span>
-                <span class="btn-text" data-i18n="publish">कैटलॉग में प्रकाशित करें</span>
-              </button>
-              <button class="btn-whatsapp mt-2" id="btnShareWhatsApp">
-                <span class="btn-icon">💬</span>
-                <span class="btn-text" data-i18n="share_whatsapp">व्हाट्सएप पर शेयर करें (WhatsApp)</span>
-              </button>
-              <button class="btn-outline mt-2" id="btnSaveDraft" data-i18n="save_draft">ड्राफ्ट के रूप में सहेजें</button>
-              <button class="btn-text-only mt-2" id="btnBackFromPricing" data-i18n="btn_back_pricing" onclick="window.goBack()">‹ विवरण की समीक्षा पर वापस जाएं</button>
-            </div>
-          </section>
-
-        </main>
+    <!-- Fair-Trade Impact Banner -->
+    <div class="cart-impact-banner">
+      <span class="impact-badge-icon">🌿</span>
+      <div class="impact-text">
+        <strong data-i18n="cart_fair_impact">100% शिल्पी आजीविका गारंटी</strong>
+        <p data-i18n="cart_fair_sub">आपकी पूरी राशि सीधे स्थानीय भारतीय कारीगर परिवार को प्राप्त होती है।</p>
       </div>
     </div>
 
-    <!-- Right: SIH Live Architecture & API Demo Guide -->
-    <div class="guide-panel">
-      <div class="panel-card hero-guide">
-        <h3>🇮🇳 Smart India Hackathon (SIH) Prototype</h3>
-        <p><strong>kalaSetu</strong>: AI-powered "virtual business manager" for marginalized artisans, weavers, and micro-entrepreneurs in India.</p>
-      </div>
+    <!-- Cart Items Scroll List -->
+    <div class="cart-items-scroll" id="cartItemsContainer">
+      <!-- Injected dynamically -->
+    </div>
 
-      <!-- Live Backend & API Inspector -->
-      <div class="panel-card">
-        <h4>⚡ Live API & System Status</h4>
-        <div class="status-indicator">
-          <span class="pulse-dot"></span> Backend: <strong>Connected (Node.js/Express)</strong>
+    <!-- Cart Footer & Checkout -->
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-col">
+        <div class="summary-row">
+          <span data-i18n="cart_subtotal">उप-योग (Subtotal):</span>
+          <strong id="cartSubtotal">₹0</strong>
         </div>
-        <div class="status-indicator">
-          <span class="pulse-dot"></span> Database: <strong>PostgreSQL / Hybrid Storage Ready</strong>
+        <div class="summary-row">
+          <span data-i18n="cart_shipping">शिल्प सुरक्षित डिलीवरी:</span>
+          <span class="free-shipping-tag" data-i18n="cart_free_delivery">मुफ़्त (Free)</span>
         </div>
-        <div class="status-indicator">
-          <span class="pulse-dot"></span> AI Engine: <strong>Google Gemini Multimodal</strong>
-        </div>
-        <div class="status-indicator">
-          <span class="pulse-dot"></span> Seeded Comparables: <strong>35+ Indian Crafts in DB</strong>
-        </div>
-      </div>
-
-      <!-- Quick Nav for Judges -->
-      <div class="panel-card">
-        <h4>🚀 Quick Jump for Judges / Evaluators</h4>
-        <div class="quick-nav-buttons">
-          <button class="btn-tag" onclick="window.navigateTo('screen-language')">1. Language Picker</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-auth')">2. Phone / OTP Auth</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-home')">3. Product Catalog</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-camera')">4. In-App Camera</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-enhancer')">5. AI Image Studio</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-voice')">6. Voice Cataloger</button>
-          <button class="btn-tag" onclick="window.navigateTo('screen-pricing')">7. Dynamic Pricing</button>
-          <button class="btn-tag" onclick="window.openGeMModal()">8. GeM / ODOP Sync</button>
-          <button class="btn-tag btn-highlight-tag" onclick="window.openWallVisualizer('/uploads/sample_painting_enhanced.jpg', 'Mithila Tree of Life (Madhubani)', '3450')">9. 🖼️ Wall Art Visualizer</button>
-          <button class="btn-tag btn-highlight-tag" onclick="window.openCoaModal('prod-painting-01')">10. 📜 Certificate of Authenticity</button>
-          <button class="btn-tag" onclick="window.selectCraftSample('pot')">🏺 Try: Terracotta Pot</button>
-          <button class="btn-tag" onclick="window.selectCraftSample('clay')">☕ Try: Clay Kulhad</button>
-          <button class="btn-tag" onclick="window.selectCraftSample('mat')">🌾 Try: River Grass Mat</button>
-          <button class="btn-tag" onclick="window.selectCraftSample('cottage')">🧺 Try: Cottage Basket</button>
+        <div class="summary-row total-row">
+          <span data-i18n="cart_total">कुल देय राशि:</span>
+          <strong class="total-price" id="cartTotalPrice">₹0</strong>
         </div>
       </div>
 
-      <!-- End-to-End Features Summary -->
-      <div class="panel-card">
-        <h4>🎯 Core SIH Principles Implemented</h4>
-        <ul class="guide-features-list">
-          <li><strong>Low-Digital-Literacy UX:</strong> Minimum 56px touch targets, icon-first, high contrast.</li>
-          <li><strong>Bilingual Architecture:</strong> Instant one-tap toggle between Hindi & English across all screens.</li>
-          <li><strong>Voice-First Workflow:</strong> Speech-to-text with Gemini + audio TTS readback.</li>
-          <li><strong>AI Studio Enhancer:</strong> Eliminates workshop clutter, balances lighting, 1:1 e-commerce ready.</li>
-          <li><strong>Fair-Trade Pricing Engine:</strong> Calculates fair living wage based on materials, labor hours & 35+ Indian handicraft benchmarks.</li>
-        </ul>
+      <button class="btn-checkout-primary" id="btnStartCheckout" onclick="window.openCheckoutModal()">
+        <span class="btn-text" data-i18n="btn_checkout">सुरक्षित चेकआउट करें</span>
+        <span class="btn-icon">➔</span>
+      </button>
+      <button class="btn-cart-whatsapp" id="btnCartWhatsAppCheckout" onclick="window.sendCartToWhatsApp()">
+        <span>💬 व्हाट्सएप पर सीधे ऑर्डर करें</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========================================================
+       ORDER CHECKOUT MODAL
+       ======================================================== -->
+  <div class="modal-overlay hidden" id="checkoutModal">
+    <div class="modal-card modal-checkout-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="gem-emblem">📦</span>
+          <div>
+            <h3 data-i18n="checkout_title">शिल्प ऑर्डर चेकआउट</h3>
+            <p data-i18n="checkout_sub">डिलीवरी पता व भुगतान विकल्प चुनें</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btnCloseCheckout" onclick="window.closeCheckoutModal()">✕</button>
+      </div>
+
+      <div class="modal-body checkout-modal-body" id="checkoutBody">
+        <!-- Delivery Form -->
+        <div class="checkout-form-section">
+          <h4 class="form-section-title" data-i18n="delivery_details">📍 डिलीवरी विवरण</h4>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" data-i18n="chk_name">ग्राहक का पूरा नाम</label>
+              <input type="text" id="chkInputName" class="text-input" placeholder="e.g. Ramesh Kumar" value="Ramesh Kumar" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="chk_phone">मोबाइल नंबर (WhatsApp)</label>
+              <input type="tel" id="chkInputPhone" class="text-input" placeholder="10-digit number" value="9812345678" />
+            </div>
+          </div>
+
+          <div class="form-group mt-2">
+            <label class="form-label" data-i18n="chk_address">मकान नंबर, सड़क व इलाका</label>
+            <input type="text" id="chkInputAddress" class="text-input" placeholder="Flat / House / Landmark" value="Plot 42, Kabir Nagar, Durgakund" />
+          </div>
+
+          <div class="form-grid-2 mt-2">
+            <div class="form-group">
+              <label class="form-label" data-i18n="chk_city">शहर / ज़िला</label>
+              <input type="text" id="chkInputCity" class="text-input" value="Varanasi" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="chk_pincode">पिनकोड</label>
+              <input type="text" id="chkInputPin" class="text-input" value="221005" />
+            </div>
+          </div>
+
+          <!-- Payment Options -->
+          <h4 class="form-section-title mt-4" data-i18n="payment_method">💳 भुगतान का माध्यम</h4>
+          <div class="payment-options-grid">
+            <label class="payment-card active">
+              <input type="radio" name="payOption" value="upi" checked />
+              <div class="pay-info">
+                <strong>📲 UPI / QR कोड</strong>
+                <small>Google Pay, PhonePe, Paytm</small>
+              </div>
+            </label>
+            <label class="payment-card">
+              <input type="radio" name="payOption" value="cod" />
+              <div class="pay-info">
+                <strong>💵 कैश ऑन डिलीवरी (COD)</strong>
+                <small>सामग्री मिलने पर भुगतान करें</small>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Order Summary Column -->
+        <div class="checkout-summary-box">
+          <h4 data-i18n="order_items_summary">📋 ऑर्डर सारांश:</h4>
+          <div class="checkout-items-list" id="checkoutItemsList"></div>
+          <div class="checkout-total-banner">
+            <span data-i18n="total_payable">कुल देय राशि:</span>
+            <strong id="chkFinalTotal">₹0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Screen (Hidden Initially) -->
+      <div class="modal-body confirmation-body hidden" id="orderConfirmedBox">
+        <div class="success-animation-circle">✓</div>
+        <h3 data-i18n="order_success_title">🎉 बधाई! आपका ऑर्डर सफलतापूर्वक दर्ज हो गया है</h3>
+        <p class="order-id-tag" id="confirmedOrderIdTag">ऑर्डर ID: KS-ORD-2026-98421</p>
+        <p class="order-notice-text" data-i18n="order_success_msg">
+          शिल्पकार को ऑर्डर का विवरण भेज दिया गया है। कारीगर आपकी कलाकृति को प्यार और सावधानी से पैक करके 2 कार्य दिवसों में प्रेषित करेंगे।
+        </p>
+        <div class="confirmation-actions">
+          <button class="btn-whatsapp" id="btnShareOrderToArtisanWhatsApp">
+            <span>💬 कारीगर को व्हाट्सएप पर ऑर्डर पुष्टि भेजें</span>
+          </button>
+          <button class="btn-outline mt-2" onclick="window.closeCheckoutModal()">
+            <span>दुकान पर वापस जाएं (Continue Shopping)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-footer" id="checkoutFooter">
+        <button class="btn-primary" id="btnConfirmPlaceOrder" onclick="window.processPlaceOrder()">
+          <span class="btn-icon">✓</span>
+          <span class="btn-text" data-i18n="btn_confirm_order">ऑर्डर की पुष्टि करें</span>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- GeM Modal Popup -->
+  <!-- ========================================================
+       PRODUCT DETAIL QUICK INSPECT MODAL
+       ======================================================== -->
+  <div class="modal-overlay hidden" id="productDetailModal">
+    <div class="modal-card modal-detail-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="gem-emblem">🎨</span>
+          <div>
+            <h3 id="detailProductTitle">हस्तनिर्मित शिल्प</h3>
+            <p id="detailProductCategory">पारंपरिक भारतीय कला</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="window.closeProductDetail()">✕</button>
+      </div>
+
+      <div class="modal-body detail-modal-body">
+        <div class="detail-gallery-col">
+          <div class="detail-main-img-wrap">
+            <img id="detailMainImg" src="/uploads/sample_enhanced_1.svg" alt="Craft Photo" />
+            <div class="detail-badges-strip">
+              <span class="badge-studio">✨ AI Studio Enhanced</span>
+              <span class="badge-gi">🏛️ GI Certified</span>
+              <span class="badge-fair">⚖️ Fair Trade</span>
+            </div>
+          </div>
+
+          <!-- Action buttons for art & verification -->
+          <div class="detail-interactive-actions mt-3">
+            <button class="btn-detail-vis" id="btnDetailWallPreview" onclick="window.triggerDetailWallPreview()">
+              <span>🖼️ कमरे की दीवार पर लगा कर देखें</span>
+            </button>
+            <button class="btn-detail-coa" id="btnDetailCoa" onclick="window.triggerDetailCoa()">
+              <span>📜 प्रामाणिकता प्रमाणपत्र पासपोर्ट (COA)</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="detail-info-col">
+          <!-- Artisan Meta Badge -->
+          <div class="detail-artisan-banner">
+            <span class="artisan-badge-ico">👩‍🎨</span>
+            <div>
+              <strong id="detailArtisanName">Radha Devi (राधा देवी)</strong>
+              <p id="detailArtisanOrigin">Varanasi Cluster, Uttar Pradesh</p>
+            </div>
+          </div>
+
+          <!-- Story Section -->
+          <div class="detail-story-box mt-3">
+            <h4 data-i18n="craft_story_title">📖 शिल्प की विरासत एवं निर्माण कथा:</h4>
+            <p id="detailProductStory" class="detail-story-text">
+              शुद्ध शहतूत रेशम पर हाथ से बुना पारंपरिक दुपट्टा, किनारों पर सोने की बारीक जरी का काम।
+            </p>
+          </div>
+
+          <!-- Fair Trade Cost Breakdown -->
+          <div class="detail-breakdown-card mt-3">
+            <div class="breakdown-head">
+              <span class="fair-leaf">🌿</span>
+              <strong data-i18n="fair_breakdown_title">पारदर्शी शिल्पी मूल्य निर्धारण (Fair-Trade Breakdown)</strong>
+            </div>
+            <div class="breakdown-grid">
+              <div class="breakdown-row">
+                <span data-i18n="raw_materials">कच्ची प्राकृतिक सामग्री:</span>
+                <strong id="detailMatCost">₹350</strong>
+              </div>
+              <div class="breakdown-row">
+                <span data-i18n="artisan_labor">हस्तनिर्मित कारीगरी श्रम:</span>
+                <strong id="detailLaborCost">6 घंटे (₹450)</strong>
+              </div>
+              <div class="breakdown-row">
+                <span data-i18n="heritage_premium">पारंपरिक जीआई कला अधिशेष:</span>
+                <strong id="detailGiPremium">₹150</strong>
+              </div>
+            </div>
+            <div class="detail-final-price-row">
+              <span data-i18n="fair_sale_price">उचित विक्रय मूल्य:</span>
+              <strong class="detail-price-num" id="detailPriceDisplay">₹950</strong>
+            </div>
+          </div>
+
+          <!-- Purchase and Inquire Actions -->
+          <div class="detail-purchase-row mt-4">
+            <button class="btn-primary flex-1" id="btnDetailAddToCart" onclick="window.addActiveDetailToCart()">
+              <span class="btn-icon">🛒</span>
+              <span data-i18n="btn_add_to_cart">कार्ट में जोड़ें</span>
+            </button>
+            <button class="btn-whatsapp flex-1" id="btnDetailWhatsApp" onclick="window.inquireActiveDetailWhatsApp()">
+              <span class="btn-icon">💬</span>
+              <span data-i18n="btn_whatsapp_inquire">व्हाट्सएप पर बात करें</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       ARTISAN DIGITIZER STUDIO WIZARD MODAL (Full Creator Studio)
+       ======================================================== -->
+  <div class="modal-overlay hidden" id="studioWizardModal">
+    <div class="modal-card modal-wizard-card">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <span class="gem-emblem">✨</span>
+          <div>
+            <h3 data-i18n="wizard_title">AI शिल्पी बिजनेस स्टूडियो</h3>
+            <p data-i18n="wizard_sub">फ़ोटो सुधारें, बोलकर कैटलॉग बनाएं, और उचित मूल्य तय करें</p>
+          </div>
+        </div>
+        <button class="btn-close-modal" onclick="window.closeStudioWizard()">✕</button>
+      </div>
+
+      <!-- Studio Wizard Steps Progress Bar -->
+      <div class="wizard-steps-bar">
+        <div class="wizard-step active" id="wizStep1"><span class="step-num">1</span> <span data-i18n="step_photo">फ़ोटो</span></div>
+        <div class="wizard-step" id="wizStep2"><span class="step-num">2</span> <span data-i18n="step_ai">AI स्टूडियो</span></div>
+        <div class="wizard-step" id="wizStep3"><span class="step-num">3</span> <span data-i18n="step_voice">बोलें (Voice)</span></div>
+        <div class="wizard-step" id="wizStep4"><span class="step-num">4</span> <span data-i18n="step_pricing">मूल्य (Price)</span></div>
+      </div>
+
+      <div class="modal-body wizard-body-scroll">
+        
+        <!-- STEP 1: Capture or Select Photo -->
+        <div class="wizard-pane active" id="wizPane1">
+          <div class="wizard-pane-header">
+            <h4 data-i18n="pane1_title">📸 शिल्प की तस्वीर लें या फ़ाइल चुनें</h4>
+            <p data-i18n="pane1_sub">कैमरा खोलें या अपनी गैलरी से वास्तविक शिल्प की तस्वीर अपलोड करें</p>
+          </div>
+
+          <div class="camera-stage-box">
+            <video id="webcamVideo" autoplay playsinline class="webcam-feed hidden"></video>
+            <div class="camera-canvas-preview" id="cameraPreviewBox">
+              <img id="wizSelectedImgPreview" src="/uploads/sample_raw_1.svg" alt="Craft Sample" />
+            </div>
+          </div>
+
+          <!-- Quick Craft Chips Selector -->
+          <div class="wiz-craft-presets mt-3">
+            <span class="presets-lbl" data-i18n="wiz_preset_lbl">त्वरित शिल्प नमूने (1-टैप चयन):</span>
+            <div class="craft-quick-strip">
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('pot')">
+                <span class="chip-icon">🏺</span>
+                <span class="chip-name">मिट्टी का मटका</span>
+              </button>
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('clay')">
+                <span class="chip-icon">☕</span>
+                <span class="chip-name">कुल्हड़ व पात्र</span>
+              </button>
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('mat')">
+                <span class="chip-icon">🌾</span>
+                <span class="chip-name">मादुर चटाई</span>
+              </button>
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('cottage')">
+                <span class="chip-icon">🧺</span>
+                <span class="chip-name">कुटीर टोकरी</span>
+              </button>
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('painting')">
+                <span class="chip-icon">🎨</span>
+                <span class="chip-name">मधुबनी पेंटिंग</span>
+              </button>
+              <button class="craft-chip-btn" onclick="window.wizSelectCraft('textile')">
+                <span class="chip-icon">🧵</span>
+                <span class="chip-name">सिल्क दुपट्टा</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="wiz-upload-actions-row mt-3">
+            <label class="btn-outline-upload">
+              <span>📁 गैलरी से फ़ोटो चुनें (Upload Image)</span>
+              <input type="file" id="wizFileInput" accept="image/*" style="display: none;" onchange="window.handleWizFileUpload(event)" />
+            </label>
+            <button class="btn-outline" id="btnToggleCamera" onclick="window.toggleDeviceWebcam()">
+              <span>📹 लाइव कैमरा ऑन करें</span>
+            </button>
+          </div>
+
+          <div class="action-footer mt-4">
+            <button class="btn-primary" onclick="window.advanceWizStep(2)">
+              <span class="btn-text" data-i18n="next_step_ai">अगला: AI स्टूडियो सुधार ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: AI Studio Image Enhancer -->
+        <div class="wizard-pane" id="wizPane2">
+          <div class="wizard-pane-header">
+            <h4 data-i18n="pane2_title">✨ जेमिनी AI स्टूडियो सुधार</h4>
+            <p data-i18n="pane2_sub">पृष्ठभूमि साफ की गई, प्रकाश संतुलित किया गया, और 1:1 ई-कॉमर्स फ्रेमिंग तैयार</p>
+          </div>
+
+          <!-- Comparison Slider Container -->
+          <div class="comparison-container" id="wizComparisonBox">
+            <div class="comp-image-before">
+              <img id="wizImgRaw" src="/uploads/sample_raw_1.svg" alt="Raw photo" />
+              <span class="comp-badge before-badge" data-i18n="badge_raw">📷 मूल फोटो</span>
+            </div>
+            <div class="comp-image-after" id="wizCompAfter">
+              <img id="wizImgEnhanced" src="/uploads/sample_enhanced_1.svg" alt="AI Enhanced" />
+              <span class="comp-badge after-badge" data-i18n="badge_enhanced">✨ AI स्टूडियो</span>
+            </div>
+            <div class="slider-divider-line" id="wizSliderDividerLine">
+              <div class="slider-handle-pill">◂ ▸</div>
+            </div>
+            <input type="range" min="0" max="100" value="50" class="slider-bar" id="wizCompareSlider" oninput="window.updateWizCompareSlider(this.value)" />
+          </div>
+
+          <!-- Gemini AI Studio Insights -->
+          <div class="insights-box mt-3">
+            <h4>🔍 जेमिनी AI स्टूडियो सुधार:</h4>
+            <ul>
+              <li>✓ <strong>पृष्ठभूमि:</strong> कार्यशाला की अव्यवस्था हटाकर स्टूडियो सफेद रंग लगाया</li>
+              <li>✓ <strong>रोशनी:</strong> प्राकृतिक रंग व बारीक बनावट को निखारा</li>
+              <li>✓ <strong>आकार:</strong> 1:1 ई-कॉमर्स मानक फ्रेमिंग</li>
+            </ul>
+          </div>
+
+          <div class="action-footer mt-4">
+            <button class="btn-outline" onclick="window.advanceWizStep(1)">‹ पीछे जाएं</button>
+            <button class="btn-primary" onclick="window.advanceWizStep(3)">
+              <span class="btn-text" data-i18n="next_step_voice">अगला: बोलकर विवरण तैयार करें ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Voice Auto-Cataloger -->
+        <div class="wizard-pane" id="wizPane3">
+          <div class="wizard-pane-header">
+            <h4 data-i18n="pane3_title">🎙️ अपनी भाषा में बोलकर बताएं (Voice-First)</h4>
+            <p data-i18n="pane3_sub">माइक दबाएं और अपने शिल्प के बारे में बताएं। AI स्वतः आकर्षक शीर्षक व विवरण तैयार करेगा।</p>
+          </div>
+
+          <div class="mic-stage">
+            <div class="mic-timer" id="wizMicTimer">00:00</div>
+            <button class="big-mic-btn" id="btnWizBigMic" onclick="window.toggleWizVoiceRecording()">
+              <span class="mic-icon">🎙️</span>
+            </button>
+            <p class="mic-hint" id="wizMicPromptText" data-i18n="tap_speak">बोलने के लिए माइक दबाएं</p>
+
+            <div class="live-transcript-box hidden" id="wizLiveTranscriptBox">
+              <div class="live-pulse-dot"></div>
+              <div class="live-transcript-content">
+                <span class="live-transcript-lbl">लाइव आवाज़ पहचानी जा रही है...</span>
+                <p class="live-transcript-text" id="wizLiveTranscriptText">...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Literacy-friendly TTS Read-back Banner -->
+          <div class="tts-banner mt-3" onclick="window.playWizTts()">
+            <span class="tts-icon">🔊</span>
+            <div class="tts-info">
+              <strong data-i18n="tts_title">विवरण को आवाज में सुनें (Audio Readback)</strong>
+              <p data-i18n="tts_sub">ऑडियो सुनने के लिए यहाँ टैप करें</p>
+            </div>
+          </div>
+
+          <!-- Generated Form Fields -->
+          <div class="form-grid-2 mt-3">
+            <div class="form-group">
+              <label class="form-label" data-i18n="lbl_title_hi">शीर्षक - हिंदी</label>
+              <input type="text" id="wizTitleHi" class="text-input" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="lbl_title_en">शीर्षक - English</label>
+              <input type="text" id="wizTitleEn" class="text-input" />
+            </div>
+          </div>
+
+          <div class="form-group mt-2">
+            <label class="form-label" data-i18n="lbl_desc_hi">शिल्प कथा - हिंदी</label>
+            <textarea id="wizDescHi" rows="3" class="text-input"></textarea>
+          </div>
+
+          <div class="form-group mt-2">
+            <label class="form-label" data-i18n="lbl_desc_en">Product Story - English</label>
+            <textarea id="wizDescEn" rows="3" class="text-input"></textarea>
+          </div>
+
+          <div class="action-footer mt-4">
+            <button class="btn-outline" onclick="window.advanceWizStep(2)">‹ पीछे जाएं</button>
+            <button class="btn-primary" onclick="window.advanceWizStep(4)">
+              <span class="btn-text" data-i18n="next_step_pricing">अगला: सही मूल्य निर्धारण ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Fair-Trade Dynamic Pricing Assistant -->
+        <div class="wizard-pane" id="wizPane4">
+          <div class="wizard-pane-header">
+            <h2 class="screen-title" data-i18n="pricing_title">⚖️ AI सही मूल्य निर्धारण</h2>
+            <p class="screen-subtitle" data-i18n="pricing_sub">लागत, समय और बाजार भाव के आधार पर उचित मूल्य</p>
+          </div>
+
+          <!-- Cost Inputs -->
+          <div class="form-grid-2">
+            <div class="pricing-input-box">
+              <label class="form-label" data-i18n="mat_cost">कच्चे माल का खर्च</label>
+              <div class="counter-row">
+                <button class="btn-counter" onclick="window.stepWizMat(-50)">- ₹50</button>
+                <span class="counter-val" id="wizValMaterialCost">₹350</span>
+                <button class="btn-counter" onclick="window.stepWizMat(50)">+ ₹50</button>
+              </div>
+            </div>
+
+            <div class="pricing-input-box">
+              <label class="form-label" data-i18n="hours_spent">हाथ से बनाने में लगे घंटे</label>
+              <div class="counter-row">
+                <button class="btn-counter" onclick="window.stepWizHours(-1)">- 1 hr</button>
+                <span class="counter-val" id="wizValHoursSpent">6 घंटे</span>
+                <button class="btn-counter" onclick="window.stepWizHours(1)">+ 1 hr</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Suggested Price Box -->
+          <div class="pricing-result-card mt-3">
+            <div class="result-header">
+              <span data-i18n="ai_price_header">✨ जेमिनी AI अनुशंसित मूल्य</span>
+              <span class="fair-badge" data-i18n="fair_badge">Fair Trade Certified</span>
+            </div>
+            <div class="price-display" id="wizDisplayPrice">₹950</div>
+            <div class="market-range" id="wizMarketRange">बाजार बिक्री दायरा: ₹850 – ₹1,200</div>
+            <div class="justification-text" id="wizJustification">
+              आपकी सामग्री लागत (₹350) और 6 घंटे के श्रम के अनुसार ₹950 उचित मूल्य है।
+            </div>
+
+            <div class="slider-adjust-row mt-3">
+              <span data-i18n="adjust_price_lbl">मूल्य समायोजन:</span>
+              <strong id="wizSliderPriceLabel">₹950</strong>
+            </div>
+            <input type="range" id="wizPriceSlider" min="300" max="4000" step="50" value="950" oninput="window.updateWizPriceSlider(this.value)" />
+          </div>
+
+          <div class="action-footer mt-4">
+            <button class="btn-outline" onclick="window.advanceWizStep(3)">‹ पीछे जाएं</button>
+            <button class="btn-primary" onclick="window.publishWizProduct()">
+              <span class="btn-icon">🏪</span>
+              <span class="btn-text" data-i18n="publish">कैटलॉग में प्रकाशित करें</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       GOVERNMENT GeM & ODOP PORTAL MODAL
+       ======================================================== -->
   <div class="modal-overlay hidden" id="gemModal">
     <div class="modal-card">
       <div class="modal-header">
@@ -526,7 +1384,7 @@
             <p data-i18n="gem_modal_sub">Government e-Marketplace & ODOP Synchronization</p>
           </div>
         </div>
-        <button class="btn-close-modal" id="btnCloseGem">✕</button>
+        <button class="btn-close-modal" id="btnCloseGem" onclick="window.closeGeMModal()">✕</button>
       </div>
 
       <div class="modal-body">
@@ -552,14 +1410,16 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn-gem-sync" id="btnDoGemSync">
+        <button class="btn-gem-sync" id="btnDoGemSync" onclick="window.performGeMSync()">
           <span data-i18n="gem_btn_sync">🏛️ 1-क्लिक में GeM कैटलॉग से सिंक करें</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Wall Art Room Visualizer Modal -->
+  <!-- ========================================================
+       WALL ART ROOM VISUALIZER MODAL
+       ======================================================== -->
   <div class="modal-overlay hidden" id="roomVisualizerModal">
     <div class="modal-card modal-visualizer-card">
       <div class="modal-header">
@@ -570,7 +1430,7 @@
             <p data-i18n="vis_sub">लिविंग रूम की दीवार पर पेंटिंग का वास्तविक आकार व फ्रेम देखें</p>
           </div>
         </div>
-        <button class="btn-close-modal" id="btnCloseVisualizer">✕</button>
+        <button class="btn-close-modal" id="btnCloseVisualizer" onclick="window.closeWallVisualizer()">✕</button>
       </div>
 
       <div class="modal-body p-0">
@@ -626,7 +1486,9 @@
     </div>
   </div>
 
-  <!-- Digital Certificate of Authenticity (COA) Modal -->
+  <!-- ========================================================
+       DIGITAL CERTIFICATE OF AUTHENTICITY (COA) MODAL
+       ======================================================== -->
   <div class="modal-overlay hidden" id="coaModal">
     <div class="modal-card modal-coa-card">
       <div class="modal-header">
@@ -637,7 +1499,7 @@
             <p data-i18n="coa_sub">सरकारी व जीआई सत्यापित शिल्पी प्रामाणिकता पासपोर्ट</p>
           </div>
         </div>
-        <button class="btn-close-modal" id="btnCloseCoa">✕</button>
+        <button class="btn-close-modal" id="btnCloseCoa" onclick="window.closeCoaModal()">✕</button>
       </div>
 
       <div class="modal-body coa-body-scroll">

@@ -5,6 +5,16 @@ const API_BASE = window.location.origin;
 const state = {
   language: 'hi', // 'hi' or 'en'
   currentScreen: 'screen-language',
+  portal: 'marketplace', // 'marketplace' | 'artisan-studio' | 'phone-demo'
+  viewMode: 'full-app', // 'full-app' | 'phone-sim'
+  cart: [],
+  searchQuery: '',
+  activeCategory: 'all',
+  giOnly: false,
+  sortOrder: 'recommended',
+  activeProductDetail: null,
+  wizStep: 1,
+  webcamStream: null,
   selectedCraft: 'Textiles',
   materialCost: 350,
   hoursSpent: 6,
@@ -195,7 +205,95 @@ const i18n = {
     btn_back_pricing: '‹ विवरण की समीक्षा पर वापस जाएं',
     btn_back_rerecord: '‹ दोबारा बोलें / पीछे जाएं',
     listening_live: 'लाइव आवाज़ पहचानी जा रही है...',
-    your_voice: 'आपकी आवाज़'
+    your_voice: 'आपकी आवाज़',
+
+    // Full Web Application Keys
+    nav_tagline: 'कला सेतु',
+    nav_subtext: 'राष्ट्रीय हस्तशिल्प एवं हथकरघा डिजिटल सेतु',
+    nav_marketplace: 'हस्तशिल्प बाज़ार',
+    nav_studio: 'शिल्पी स्टूडियो',
+    nav_gem: 'GeM व ODOP',
+    search_placeholder: 'शिल्प, कलाकार या सामग्री खोजें (Search pottery, silk, Madhubani)...',
+    mode_phone_sim: 'फ़ोन डेमो',
+    mode_full_app: 'पूर्ण ऐप',
+    cart_title: 'कार्ट',
+    cart_drawer_title: 'आपकी टोकरी (Shopping Cart)',
+    cart_fair_impact: '100% शिल्पी आजीविका गारंटी',
+    cart_fair_sub: 'आपकी पूरी राशि सीधे स्थानीय भारतीय कारीगर परिवार को प्राप्त होती है।',
+    cart_subtotal: 'उप-योग (Subtotal):',
+    cart_shipping: 'शिल्प सुरक्षित डिलीवरी:',
+    cart_free_delivery: 'मुफ़्त (Free)',
+    cart_total: 'कुल देय राशि:',
+    btn_checkout: 'सुरक्षित चेकआउट करें',
+    hero_badge: '100% प्रामाणिक पारंपरिक भारतीय हस्तकला • निष्पक्ष आजीविका गारंटी',
+    hero_title: 'भारत की समृद्ध हस्तकला विरासत <br /><span class="hero-highlight">सीधे उस्ताद कारीगरों के हाथों से</span>',
+    hero_desc: 'जेमिनी AI द्वारा संचालित निष्पक्ष मूल्य निर्धारण, डिजिटल जीआई प्रामाणिकता प्रमाणपत्र (COA), तथा आपके घर की दीवार पर लाइव एआर (AR) पेंटिंग प्रीव्यू के साथ खरीदारी करें।',
+    pillar_fair_title: 'निष्पक्ष आजीविका',
+    pillar_fair_sub: 'सामग्री व श्रम की पूरी पारदर्शिता',
+    pillar_coa_title: 'जीआई प्रामाणिकता',
+    pillar_coa_sub: 'नकल-मुक्त क्रिप्टोग्राफिक पासपोर्ट',
+    pillar_ar_title: 'कमरे में वॉल प्रीव्यू',
+    pillar_ar_sub: 'फ्रेम व दीवार के रंग के साथ देखें',
+    pillar_wa_title: 'सीधा व्हाट्सएप संपर्क',
+    pillar_wa_sub: 'कारीगर से सीधे बातचीत व ऑर्डर',
+    filter_gi_only: '🌟 केवल जीआई (GI) प्रमाणित शिल्प',
+    sort_label: 'क्रमबद्ध करें:',
+    sort_rec: 'लोकप्रिय व अनुशंसित',
+    sort_asc: 'मूल्य: कम से ज्यादा',
+    sort_desc: 'मूल्य: ज्यादा से कम',
+    sort_hours: 'कारीगरी श्रम समय (अधिकतम)',
+    btn_add_to_cart: 'कार्ट में जोड़ें',
+    btn_whatsapp_inquire: 'व्हाट्सएप पर बात करें',
+    btn_digitize_new: '✨ नया शिल्प जोड़ें (AI डिजिटाइज़)',
+    btn_gem_sync_hub: 'GeM पोर्टल सिंक',
+    stat_active_crafts: 'सक्रिय कैटलॉग शिल्प',
+    stat_earnings: 'कुल निष्पक्ष शिल्पी आय',
+    quick_samples_title: '⚡ 1-टैप डेमो शिल्प चुनें (त्वरित परीक्षण हेतु):',
+    quick_samples_sub: 'स्वचालित फोटो, विवरण, मूल्य निर्धारण व विश्लेषण लोड करें',
+    my_inventory_title: '📦 मेरी शिल्प सूची एवं प्रबंधन',
+    my_inventory_sub: 'मूल्य समायोजित करें, प्रमाणपत्र देखें, या व्हाट्सएप कैटलॉग साझा करें',
+    col_craft: 'शिल्प',
+    col_category: 'श्रेणी',
+    col_cost: 'लागत विभाजन',
+    col_price: 'विक्रय मूल्य',
+    col_status: 'स्थिति',
+    col_actions: 'कार्रवाई',
+    checkout_title: 'शिल्प ऑर्डर चेकआउट',
+    checkout_sub: 'डिलीवरी पता व भुगतान विकल्प चुनें',
+    delivery_details: '📍 डिलीवरी विवरण',
+    chk_name: 'ग्राहक का पूरा नाम',
+    chk_phone: 'मोबाइल नंबर (WhatsApp)',
+    chk_address: 'मकान नंबर, सड़क व इलाका',
+    chk_city: 'शहर / ज़िला',
+    chk_pincode: 'पिनकोड',
+    payment_method: '💳 भुगतान का माध्यम',
+    order_items_summary: '📋 ऑर्डर सारांश:',
+    total_payable: 'कुल देय राशि:',
+    btn_confirm_order: 'ऑर्डर की पुष्टि करें',
+    order_success_title: '🎉 बधाई! आपका ऑर्डर सफलतापूर्वक दर्ज हो गया है',
+    order_success_msg: 'शिल्पकार को ऑर्डर का विवरण भेज दिया गया है। कारीगर आपकी कलाकृति को प्यार और सावधानी से पैक करके 2 कार्य दिवसों में प्रेषित करेंगे।',
+    craft_story_title: '📖 शिल्प की विरासत एवं निर्माण कथा:',
+    fair_breakdown_title: 'पारदर्शी शिल्पी मूल्य निर्धारण (Fair-Trade Breakdown)',
+    raw_materials: 'कच्ची प्राकृतिक सामग्री:',
+    artisan_labor: 'हस्तनिर्मित कारीगरी श्रम:',
+    heritage_premium: 'पारंपरिक जीआई कला अधिशेष:',
+    fair_sale_price: 'उचित विक्रय मूल्य:',
+    wizard_title: 'AI शिल्पी बिजनेस स्टूडियो',
+    wizard_sub: 'फ़ोटो सुधारें, बोलकर कैटलॉग बनाएं, और उचित मूल्य तय करें',
+    step_photo: 'फ़ोटो',
+    step_ai: 'AI स्टूडियो',
+    step_voice: 'बोलें (Voice)',
+    step_pricing: 'मूल्य (Price)',
+    pane1_title: '📸 शिल्प की तस्वीर लें या फ़ाइल चुनें',
+    pane1_sub: 'कैमरा खोलें या अपनी गैलरी से वास्तविक शिल्प की तस्वीर अपलोड करें',
+    wiz_preset_lbl: 'त्वरित शिल्प नमूने (1-टैप चयन):',
+    next_step_ai: 'अगला: AI स्टूडियो सुधार ➔',
+    pane2_title: '✨ जेमिनी AI स्टूडियो सुधार',
+    pane2_sub: 'पृष्ठभूमि साफ की गई, प्रकाश संतुलित किया गया, और 1:1 ई-कॉमर्स फ्रेमिंग तैयार',
+    next_step_voice: 'अगला: बोलकर विवरण तैयार करें ➔',
+    pane3_title: '🎙️ अपनी भाषा में बोलकर बताएं (Voice-First)',
+    pane3_sub: 'माइक दबाएं और अपने शिल्प के बारे में बताएं। AI स्वतः आकर्षक शीर्षक व विवरण तैयार करेगा।',
+    next_step_pricing: 'अगला: सही मूल्य निर्धारण ➔'
   },
   en: {
     // Header & Brand
@@ -350,7 +448,95 @@ const i18n = {
     btn_back_pricing: '‹ Back to Review Story',
     btn_back_rerecord: '‹ Re-record / Go Back',
     listening_live: 'Listening to your speech...',
-    your_voice: 'Your Spoken Words'
+    your_voice: 'Your Spoken Words',
+
+    // Full Web Application Keys
+    nav_tagline: 'कला सेतु',
+    nav_subtext: 'National Artisans & Handlooms Digital Network',
+    nav_marketplace: 'Handicraft Market',
+    nav_studio: 'Artisan Studio',
+    nav_gem: 'GeM & ODOP',
+    search_placeholder: 'Search handmade pottery, silk, Madhubani...',
+    mode_phone_sim: 'Phone Demo',
+    mode_full_app: 'Full Web App',
+    cart_title: 'Cart',
+    cart_drawer_title: 'Your Shopping Cart',
+    cart_fair_impact: '100% Direct Artisan Livelihood Guarantee',
+    cart_fair_sub: '100% of the craft value goes straight to traditional artisan families.',
+    cart_subtotal: 'Subtotal:',
+    cart_shipping: 'Secure Handcrafted Delivery:',
+    cart_free_delivery: 'Free',
+    cart_total: 'Total Amount:',
+    btn_checkout: 'Proceed to Checkout',
+    hero_badge: '100% Authentic Indian Craft • Fair Trade Living Wage',
+    hero_title: 'India\'s Rich Craft Heritage <br /><span class="hero-highlight">Directly from Master Artisans</span>',
+    hero_desc: 'Discover fair-trade certified crafts, verifiable GI-tag authenticity passports, and AR room wall visualizer powered by Google Gemini AI.',
+    pillar_fair_title: 'Fair Livelihood',
+    pillar_fair_sub: 'Full transparency in materials & labor',
+    pillar_coa_title: 'GI Authenticity',
+    pillar_coa_sub: 'Counterfeit-proof cryptographic passport',
+    pillar_ar_title: 'Living Room Preview',
+    pillar_ar_sub: 'Visualize with frame & wall paint colors',
+    pillar_wa_title: 'Direct WhatsApp Connect',
+    pillar_wa_sub: 'Chat and order directly with artisans',
+    filter_gi_only: '🌟 GI Tagged Crafts Only',
+    sort_label: 'Sort by:',
+    sort_rec: 'Popular & Recommended',
+    sort_asc: 'Price: Low to High',
+    sort_desc: 'Price: High to Low',
+    sort_hours: 'Craft Labor Hours (Highest)',
+    btn_add_to_cart: 'Add to Cart',
+    btn_whatsapp_inquire: 'Chat on WhatsApp',
+    btn_digitize_new: '✨ Digitize New Craft (AI)',
+    btn_gem_sync_hub: 'Sync GeM Portal',
+    stat_active_crafts: 'Active Crafts in Catalog',
+    stat_earnings: 'Total Artisan Revenue',
+    quick_samples_title: '⚡ 1-Tap Demo Crafts (Instant Test):',
+    quick_samples_sub: 'Auto-load sample photos, voice descriptions & pricing',
+    my_inventory_title: '📦 My Crafts Inventory & Management',
+    my_inventory_sub: 'Adjust prices, view authenticity certificate, or share catalog',
+    col_craft: 'Craft',
+    col_category: 'Category',
+    col_cost: 'Cost Breakdown',
+    col_price: 'Selling Price',
+    col_status: 'Status',
+    col_actions: 'Actions',
+    checkout_title: 'Craft Order Checkout',
+    checkout_sub: 'Enter delivery address and payment choice',
+    delivery_details: '📍 Delivery Address',
+    chk_name: 'Customer Full Name',
+    chk_phone: 'Mobile Number (WhatsApp)',
+    chk_address: 'Street & Flat Address',
+    chk_city: 'City / District',
+    chk_pincode: 'PIN Code',
+    payment_method: '💳 Payment Method',
+    order_items_summary: '📋 Order Summary:',
+    total_payable: 'Total Payable:',
+    btn_confirm_order: 'Confirm Order',
+    order_success_title: '🎉 Congratulations! Your Order is Confirmed',
+    order_success_msg: 'Order details have been dispatched to the master artisan. Handcrafted packaging will commence immediately.',
+    craft_story_title: '📖 Craft Heritage & Provenance Story:',
+    fair_breakdown_title: 'Transparent Artisan Fair-Trade Breakdown',
+    raw_materials: 'Raw Natural Materials:',
+    artisan_labor: 'Handcrafted Artisan Labor:',
+    heritage_premium: 'Traditional GI Art Premium:',
+    fair_sale_price: 'Fair Selling Price:',
+    wizard_title: 'AI Artisan Business Studio',
+    wizard_sub: 'Enhance photos, create voice catalogs, and calculate fair prices',
+    step_photo: 'Photo',
+    step_ai: 'AI Studio',
+    step_voice: 'Voice',
+    step_pricing: 'Price',
+    pane1_title: '📸 Take Photo or Upload Image',
+    pane1_sub: 'Open device camera or select a photograph from your gallery',
+    wiz_preset_lbl: 'Quick Sample Crafts (1-Tap):',
+    next_step_ai: 'Next: AI Studio Enhancement ➔',
+    pane2_title: '✨ Gemini AI Studio Image Enhancement',
+    pane2_sub: 'Workshop clutter removed, studio highlights balanced, and 1:1 e-commerce ready',
+    next_step_voice: 'Next: Voice Storytelling ➔',
+    pane3_title: '🎙️ Speak in Your Native Language (Voice-First)',
+    pane3_sub: 'Tap mic and describe your craft. AI will generate SEO titles and stories automatically.',
+    next_step_pricing: 'Next: Fair-Trade Pricing ➔'
   }
 };
 
@@ -407,12 +593,18 @@ window.goBack = goBack;
 function setLanguage(lang) {
   state.language = lang;
 
-  // 1. Update Header Segmented Control
+  // 1. Update Header Segmented Control & Global Navbar Language Control
   const btnHi = document.getElementById('btnLangHi');
   const btnEn = document.getElementById('btnLangEn');
   if (btnHi && btnEn) {
     btnHi.classList.toggle('active', lang === 'hi');
     btnEn.classList.toggle('active', lang === 'en');
+  }
+  const btnGlobalHi = document.getElementById('btnGlobalLangHi');
+  const btnGlobalEn = document.getElementById('btnGlobalLangEn');
+  if (btnGlobalHi && btnGlobalEn) {
+    btnGlobalHi.classList.toggle('active', lang === 'hi');
+    btnGlobalEn.classList.toggle('active', lang === 'en');
   }
 
   // 2. Legacy Toggle Text if present
@@ -438,7 +630,15 @@ function setLanguage(lang) {
     }
   });
 
-  // 5. Update Dynamic Form Placeholders & Input Texts
+  // 5. Update Elements with [data-i18n-placeholder]
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (dict[key]) {
+      el.setAttribute('placeholder', dict[key]);
+    }
+  });
+
+  // 6. Update Dynamic Form Placeholders & Input Texts
   const hoursVal = document.getElementById('valHoursSpent');
   if (hoursVal) {
     hoursVal.textContent = lang === 'en' ? `${state.hoursSpent} hours` : `${state.hoursSpent} घंटे`;
@@ -449,7 +649,7 @@ function setLanguage(lang) {
     micHint.textContent = dict.tap_speak;
   }
 
-  // 6. Update Profile defaults if untouched
+  // 7. Update Profile defaults if untouched
   const nameInput = document.getElementById('inputArtisanName');
   if (nameInput) {
     if (nameInput.value === 'Radha Devi (राधा देवी)' || nameInput.value === 'Radha Devi' || nameInput.value === 'राधा देवी') {
@@ -463,14 +663,19 @@ function setLanguage(lang) {
     }
   }
 
-  // 7. Re-render product catalog in chosen language
+  // 8. Re-render product catalogs in chosen language
   renderProductsGrid();
+  if (typeof renderMarketplace === 'function') renderMarketplace();
+  if (typeof renderStudioInventory === 'function') renderStudioInventory();
+  if (typeof renderCart === 'function') renderCart();
 }
 window.setLanguage = setLanguage;
 
-// 1. Language Listeners (Header Segmented Control + Cards)
+// 1. Language Listeners (Header Segmented Control + Cards + Global Navbar)
 document.getElementById('btnLangHi')?.addEventListener('click', () => setLanguage('hi'));
 document.getElementById('btnLangEn')?.addEventListener('click', () => setLanguage('en'));
+document.getElementById('btnGlobalLangHi')?.addEventListener('click', () => setLanguage('hi'));
+document.getElementById('btnGlobalLangEn')?.addEventListener('click', () => setLanguage('en'));
 document.getElementById('langCardHi')?.addEventListener('click', () => setLanguage('hi'));
 document.getElementById('langCardEn')?.addEventListener('click', () => setLanguage('en'));
 document.getElementById('langToggleBtn')?.addEventListener('click', () => {
@@ -535,8 +740,11 @@ async function loadProducts() {
     const data = await res.json();
     if (data.success && Array.isArray(data.products)) {
       state.products = data.products;
-      document.getElementById('statProductCount').textContent = state.products.length;
+      const cnt = document.getElementById('statProductCount');
+      if (cnt) cnt.textContent = state.products.length;
       renderProductsGrid();
+      if (typeof renderMarketplace === 'function') renderMarketplace();
+      if (typeof renderStudioInventory === 'function') renderStudioInventory();
     }
   } catch (err) {
     console.error('Failed to load products:', err);
@@ -1411,6 +1619,899 @@ window.printCoa = function() {
   window.print();
 };
 
+// ========================================================
+// 13. FULL WEB APPLICATION CONTROLLER & MARKETPLACE
+// ========================================================
+
+// Portal Switching: 'marketplace' | 'artisan-studio' | 'phone-demo'
+function switchPortal(portalName) {
+  state.portal = portalName;
+  
+  // Update Tab Buttons
+  document.getElementById('tabMarketplace')?.classList.toggle('active', portalName === 'marketplace');
+  document.getElementById('tabArtisanStudio')?.classList.toggle('active', portalName === 'artisan-studio');
+  
+  // Toggle Portal Views
+  const viewMarketplace = document.getElementById('viewMarketplace');
+  const viewStudio = document.getElementById('viewArtisanStudio');
+  const viewPhone = document.getElementById('viewPhoneDemo');
+  
+  if (viewMarketplace) viewMarketplace.classList.toggle('active', portalName === 'marketplace');
+  if (viewStudio) viewStudio.classList.toggle('active', portalName === 'artisan-studio');
+  if (viewPhone) viewPhone.classList.toggle('active', portalName === 'phone-demo');
+  
+  if (portalName === 'marketplace') {
+    renderMarketplace();
+  } else if (portalName === 'artisan-studio') {
+    renderStudioInventory();
+  }
+}
+window.switchPortal = switchPortal;
+
+// View Mode Toggle: 'full-app' vs 'phone-sim'
+function toggleViewMode() {
+  const isSim = document.body.classList.contains('mode-phone-sim');
+  const icon = document.getElementById('modeIcon');
+  const text = document.getElementById('modeText');
+  
+  if (isSim) {
+    document.body.classList.remove('mode-phone-sim');
+    document.body.classList.add('mode-full-app');
+    state.viewMode = 'full-app';
+    if (icon) icon.textContent = '📱';
+    if (text) text.textContent = state.language === 'en' ? 'Phone Demo' : 'फ़ोन डेमो';
+    switchPortal(state.portal === 'phone-demo' ? 'marketplace' : state.portal);
+    showToast(state.language === 'en' ? '🖥️ Switched to Full Web App Mode' : '🖥️ पूर्ण वेब ऐप मोड सक्रिय', 'info');
+  } else {
+    document.body.classList.remove('mode-full-app');
+    document.body.classList.add('mode-phone-sim');
+    state.viewMode = 'phone-sim';
+    if (icon) icon.textContent = '🖥️';
+    if (text) text.textContent = state.language === 'en' ? 'Full App' : 'पूर्ण ऐप';
+    switchPortal('phone-demo');
+    showToast(state.language === 'en' ? '📱 Switched to Phone Simulator Mode' : '📱 फ़ोन सिम्युलेटर मोड सक्रिय', 'info');
+  }
+}
+window.toggleViewMode = toggleViewMode;
+document.getElementById('btnToggleViewMode')?.addEventListener('click', toggleViewMode);
+
+// Marketplace Rendering
+function renderMarketplace() {
+  const grid = document.getElementById('marketplaceGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  
+  const isEn = state.language === 'en';
+  let list = [...state.products];
+  
+  // Category Filter
+  if (state.activeCategory !== 'all') {
+    const filter = state.activeCategory;
+    if (filter === 'paintings') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('paint')) || (p.title_en && p.title_en.toLowerCase().includes('paint')));
+    } else if (filter === 'pottery') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('pot')) || (p.title_en && (p.title_en.toLowerCase().includes('pot') || p.title_en.toLowerCase().includes('clay') || p.title_en.toLowerCase().includes('vase') || (p.title_hi && (p.title_hi.includes('मटका') || p.title_hi.includes('मिट्टी'))))));
+    } else if (filter === 'fiber') {
+      list = list.filter(p => (p.category && (p.category.toLowerCase().includes('fiber') || p.category.toLowerCase().includes('grass'))) || (p.title_en && (p.title_en.toLowerCase().includes('mat') || p.title_en.toLowerCase().includes('grass') || (p.title_hi && p.title_hi.includes('चटाई')))));
+    } else if (filter === 'cottage') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('cottage')) || (p.title_en && (p.title_en.toLowerCase().includes('basket') || p.title_en.toLowerCase().includes('cottage') || p.title_en.toLowerCase().includes('sabai') || (p.title_hi && p.title_hi.includes('कुटीर')))));
+    } else if (filter === 'textiles') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('textil')) || (p.title_en && (p.title_en.toLowerCase().includes('saree') || p.title_en.toLowerCase().includes('dupatta') || p.title_en.toLowerCase().includes('silk'))));
+    }
+  }
+  
+  // GI Tag Only Filter
+  if (state.giOnly) {
+    list = list.filter(p => {
+      const t = ((p.title_en || '') + (p.category || '')).toLowerCase();
+      return t.includes('madhubani') || t.includes('banarasi') || t.includes('mithila') || t.includes('terracotta') || t.includes('sabai');
+    });
+  }
+  
+  // Search Query
+  if (state.searchQuery) {
+    const q = state.searchQuery.toLowerCase();
+    list = list.filter(p => 
+      (p.title_en && p.title_en.toLowerCase().includes(q)) ||
+      (p.title_hi && p.title_hi.toLowerCase().includes(q)) ||
+      (p.category && p.category.toLowerCase().includes(q)) ||
+      (p.description_en && p.description_en.toLowerCase().includes(q)) ||
+      (p.description_hi && p.description_hi.toLowerCase().includes(q))
+    );
+  }
+  
+  // Sorting
+  if (state.sortOrder === 'price-asc') {
+    list.sort((a, b) => (parseFloat(a.price) || 0) - (parseFloat(b.price) || 0));
+  } else if (state.sortOrder === 'price-desc') {
+    list.sort((a, b) => (parseFloat(b.price) || 0) - (parseFloat(a.price) || 0));
+  } else if (state.sortOrder === 'hours') {
+    list.sort((a, b) => (parseFloat(b.hours_spent) || 0) - (parseFloat(a.hours_spent) || 0));
+  }
+  
+  // Update count
+  const countText = document.getElementById('marketplaceCountText');
+  if (countText) {
+    countText.textContent = isEn ? `${list.length} Crafts Available` : `${list.length} कलाकृतियाँ उपलब्ध`;
+  }
+  
+  if (list.length === 0) {
+    grid.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #718096;">
+      <p style="font-size: 44px; margin-bottom: 12px;">🔍</p>
+      <h3>${isEn ? 'No crafts match your search criteria' : 'आपकी खोज के अनुसार कोई कलाकृति नहीं मिली'}</h3>
+      <p style="margin-top: 6px;">${isEn ? 'Try clearing filters or search for "silk", "pottery", or "Madhubani".' : 'फ़िल्टर हटाएं या "सिल्क", "मटका" या "मधुबनी" खोजें।'}</p>
+    </div>`;
+    return;
+  }
+  
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'marketplace-card';
+    const title = (isEn || !p.title_hi) ? p.title_en : p.title_hi;
+    const imgSrc = p.enhanced_image_url || p.raw_image_url || '/uploads/sample_enhanced_1.jpg';
+    const isPainting = (p.category && p.category.toLowerCase().includes('paint')) || (p.title_en && p.title_en.toLowerCase().includes('paint'));
+    const isHomeDecor = isPainting || (p.category && (p.category.toLowerCase().includes('cottage') || p.category.toLowerCase().includes('pot')));
+    const matCost = p.material_cost ? `₹${p.material_cost}` : '₹350';
+    const hours = p.hours_spent ? `${p.hours_spent} hrs` : '6 hrs';
+    const hoursText = isEn ? `${hours} labor` : `${p.hours_spent || 6} घंटे श्रम`;
+    const matText = isEn ? `${matCost} raw mat.` : `${matCost} सामग्री`;
+    
+    const quickViewText = isEn ? 'Quick View' : 'विस्तार देखें';
+    const addCartText = isEn ? 'Add to Cart' : 'कार्ट में जोड़ें';
+    const wallPreviewText = isEn ? '🖼️ Wall Preview' : '🖼️ वॉल प्रीव्यू';
+    const coaText = isEn ? '📜 Certificate' : '📜 प्रमाणपत्र';
+    const waText = isEn ? '💬 WhatsApp Order' : '💬 व्हाट्सएप ऑर्डर';
+    
+    const wallBtn = isHomeDecor 
+      ? `<button class="btn-card-vis-sm" onclick="window.openWallVisualizer('${imgSrc}', '${p.title_en.replace(/'/g, "\\'")}', '${p.price}')">${wallPreviewText}</button>`
+      : '';
+    const coaBtn = `<button class="btn-card-coa-sm" onclick="window.openCoaModal('${p.id}')">${coaText}</button>`;
+    
+    card.innerHTML = `
+      <div class="market-img-wrap" onclick="window.openProductDetail('${p.id}')">
+        <img src="${imgSrc}" alt="${title}" onerror="this.src='/uploads/sample_enhanced_1.svg'" />
+        <div class="market-badges-strip">
+          <span class="badge-studio">✨ AI Studio</span>
+          <span class="badge-gi">🏛️ GI Certified</span>
+        </div>
+      </div>
+      <div class="market-card-body">
+        <span class="market-cat-tag">${p.category || 'Handicraft'}</span>
+        <h3 class="market-card-title" onclick="window.openProductDetail('${p.id}')" title="${title}">${title}</h3>
+        <div class="market-artisan-byline">
+          <span>👩‍🎨</span>
+          <span>${isEn ? 'Radha Devi • Varanasi Cluster' : 'राधा देवी • वाराणसी क्लस्टर'}</span>
+        </div>
+        <div class="market-breakdown-pill">
+          <span>${matText} + ${hoursText}</span>
+          <strong>✓ 100% Fair</strong>
+        </div>
+        <div class="market-price-row">
+          <span class="market-price-val">₹${parseFloat(p.price || 0).toLocaleString('en-IN')}</span>
+          <span class="market-fair-badge">Fair Trade Verified</span>
+        </div>
+        <div class="market-card-actions">
+          <button class="btn-card-quick" onclick="window.openProductDetail('${p.id}')">👁️ ${quickViewText}</button>
+          <button class="btn-card-cart" onclick="window.addToCart('${p.id}')">🛒 ${addCartText}</button>
+          <div class="market-full-actions">
+            ${wallBtn}
+            ${coaBtn}
+          </div>
+          <button class="btn-card-wa-sm" onclick="window.orderDirectWhatsApp('${p.id}')">${waText}</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+window.renderMarketplace = renderMarketplace;
+
+// Marketplace Category Pills
+document.querySelectorAll('.category-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    state.activeCategory = pill.dataset.filter || 'all';
+    renderMarketplace();
+  });
+});
+
+// Search input
+const searchInput = document.getElementById('globalSearchInput');
+const clearSearchBtn = document.getElementById('btnClearSearch');
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    state.searchQuery = e.target.value.trim();
+    if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
+    renderMarketplace();
+  });
+}
+if (clearSearchBtn) {
+  clearSearchBtn.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    state.searchQuery = '';
+    clearSearchBtn.classList.add('hidden');
+    renderMarketplace();
+  });
+}
+
+// Sort & GI Checkbox
+document.getElementById('sortMarketplace')?.addEventListener('change', (e) => {
+  state.sortOrder = e.target.value;
+  renderMarketplace();
+});
+document.getElementById('filterGiOnly')?.addEventListener('change', (e) => {
+  state.giOnly = e.target.checked;
+  renderMarketplace();
+});
+
+// ========================================================
+// 14. SHOPPING CART & CHECKOUT CONTROLLER
+// ========================================================
+function addToCart(productId, qty = 1) {
+  const prod = state.products.find(p => p.id === productId);
+  if (!prod) return;
+  
+  const existing = state.cart.find(item => item.id === productId);
+  if (existing) {
+    existing.quantity += qty;
+  } else {
+    state.cart.push({
+      id: prod.id,
+      title_en: prod.title_en,
+      title_hi: prod.title_hi || prod.title_en,
+      price: parseFloat(prod.price || 0),
+      image_url: prod.enhanced_image_url || prod.raw_image_url || '/uploads/sample_enhanced_1.jpg',
+      category: prod.category || 'Handicraft',
+      quantity: qty
+    });
+  }
+  
+  updateCartBadge();
+  const isEn = state.language === 'en';
+  const name = isEn ? prod.title_en : (prod.title_hi || prod.title_en);
+  showToast(isEn ? `🛒 Added "${name}" to your cart!` : `🛒 "${name}" कार्ट में जोड़ा गया!`, 'success');
+}
+window.addToCart = addToCart;
+
+function removeFromCart(productId) {
+  state.cart = state.cart.filter(item => item.id !== productId);
+  updateCartBadge();
+  renderCart();
+}
+window.removeFromCart = removeFromCart;
+
+function updateCartQty(productId, delta) {
+  const item = state.cart.find(i => i.id === productId);
+  if (!item) return;
+  item.quantity += delta;
+  if (item.quantity <= 0) {
+    removeFromCart(productId);
+  } else {
+    updateCartBadge();
+    renderCart();
+  }
+}
+window.updateCartQty = updateCartQty;
+
+function updateCartBadge() {
+  const totalCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  const badge = document.getElementById('cartCountBadge');
+  if (badge) {
+    badge.textContent = totalCount;
+    badge.style.transform = 'scale(1.25)';
+    setTimeout(() => badge.style.transform = 'scale(1)', 200);
+  }
+}
+
+function openCart() {
+  renderCart();
+  document.getElementById('cartOverlay')?.classList.remove('hidden');
+  document.getElementById('cartDrawer')?.classList.remove('hidden');
+}
+window.openCart = openCart;
+
+function closeCart() {
+  document.getElementById('cartOverlay')?.classList.add('hidden');
+  document.getElementById('cartDrawer')?.classList.add('hidden');
+}
+window.closeCart = closeCart;
+
+document.getElementById('btnOpenCart')?.addEventListener('click', openCart);
+
+function renderCart() {
+  const container = document.getElementById('cartItemsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+  
+  const isEn = state.language === 'en';
+  const subtitle = document.getElementById('cartItemsSubtitle');
+  const totalCount = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+  if (subtitle) {
+    subtitle.textContent = isEn ? `${totalCount} items` : `${totalCount} वस्तुएँ`;
+  }
+  
+  if (state.cart.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 50px 20px; color: #718096;">
+        <p style="font-size: 48px; margin-bottom: 12px;">🛒</p>
+        <h4>${isEn ? 'Your cart is empty' : 'आपकी टोकरी खाली है'}</h4>
+        <p style="font-size: 13px; margin-top: 6px;">${isEn ? 'Discover authentic Indian artisan crafts and add them to your cart.' : 'कारीगरों के हस्तशिल्प खोजें और उन्हें कार्ट में जोड़ें।'}</p>
+      </div>
+    `;
+    const st = document.getElementById('cartSubtotal');
+    const tp = document.getElementById('cartTotalPrice');
+    if (st) st.textContent = '₹0';
+    if (tp) tp.textContent = '₹0';
+    return;
+  }
+  
+  let subtotal = 0;
+  state.cart.forEach(item => {
+    const itemTotal = item.price * item.quantity;
+    subtotal += itemTotal;
+    const title = (isEn || !item.title_hi) ? item.title_en : item.title_hi;
+    
+    const row = document.createElement('div');
+    row.className = 'cart-item-card';
+    row.innerHTML = `
+      <img src="${item.image_url}" alt="${title}" class="cart-item-thumb" onerror="this.src='/uploads/sample_enhanced_1.svg'" />
+      <div class="cart-item-meta">
+        <h4 class="cart-item-name">${title}</h4>
+        <span class="cart-item-price">₹${item.price.toLocaleString('en-IN')}</span>
+      </div>
+      <div class="cart-qty-ctrl">
+        <button class="btn-qty" onclick="window.updateCartQty('${item.id}', -1)">-</button>
+        <span style="font-weight: 800; font-size: 13px;">${item.quantity}</span>
+        <button class="btn-qty" onclick="window.updateCartQty('${item.id}', 1)">+</button>
+      </div>
+      <button class="btn-cart-remove" onclick="window.removeFromCart('${item.id}')" title="Remove">🗑️</button>
+    `;
+    container.appendChild(row);
+  });
+  
+  const subtotalEl = document.getElementById('cartSubtotal');
+  const totalEl = document.getElementById('cartTotalPrice');
+  if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  if (totalEl) totalEl.textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+}
+
+// CHECKOUT MODAL
+function openCheckoutModal() {
+  if (state.cart.length === 0) {
+    showToast(state.language === 'en' ? 'Your cart is empty!' : 'आपकी टोकरी खाली है!', 'warning');
+    return;
+  }
+  closeCart();
+  
+  const isEn = state.language === 'en';
+  const listContainer = document.getElementById('checkoutItemsList');
+  if (listContainer) {
+    listContainer.innerHTML = '';
+    let total = 0;
+    state.cart.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      total += itemTotal;
+      const title = (isEn || !item.title_hi) ? item.title_en : item.title_hi;
+      const itemRow = document.createElement('div');
+      itemRow.className = 'checkout-item-mini';
+      itemRow.innerHTML = `
+        <span>${title} × ${item.quantity}</span>
+        <strong>₹${itemTotal.toLocaleString('en-IN')}</strong>
+      `;
+      listContainer.appendChild(itemRow);
+    });
+    const finalTot = document.getElementById('chkFinalTotal');
+    if (finalTot) finalTot.textContent = `₹${total.toLocaleString('en-IN')}`;
+  }
+  
+  document.getElementById('checkoutBody')?.classList.remove('hidden');
+  document.getElementById('checkoutFooter')?.classList.remove('hidden');
+  document.getElementById('orderConfirmedBox')?.classList.add('hidden');
+  document.getElementById('checkoutModal')?.classList.remove('hidden');
+}
+window.openCheckoutModal = openCheckoutModal;
+
+function closeCheckoutModal() {
+  document.getElementById('checkoutModal')?.classList.add('hidden');
+}
+window.closeCheckoutModal = closeCheckoutModal;
+
+function processPlaceOrder() {
+  const name = document.getElementById('chkInputName')?.value || 'Valued Customer';
+  const phone = document.getElementById('chkInputPhone')?.value || '9812345678';
+  const address = document.getElementById('chkInputAddress')?.value || 'India';
+  const city = document.getElementById('chkInputCity')?.value || '';
+  
+  const orderId = `KS-ORD-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+  const confirmedTag = document.getElementById('confirmedOrderIdTag');
+  if (confirmedTag) confirmedTag.textContent = `ऑर्डर ID: ${orderId}`;
+  
+  document.getElementById('checkoutBody')?.classList.add('hidden');
+  document.getElementById('checkoutFooter')?.classList.add('hidden');
+  document.getElementById('orderConfirmedBox')?.classList.remove('hidden');
+  
+  const isEn = state.language === 'en';
+  const cartLines = state.cart.map(i => `- ${i.title_en} (Qty: ${i.quantity}) - ₹${i.price * i.quantity}`).join('\n');
+  const total = state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  
+  const waMsg = encodeURIComponent(
+    `🙏 *कला सेतु (kalaSetu) नया ऑर्डर!*\n\n` +
+    `*ऑर्डर ID:* ${orderId}\n` +
+    `*ग्राहक:* ${name} (+91 ${phone})\n` +
+    `*पता:* ${address}, ${city}\n\n` +
+    `*ऑर्डर की गई कलाकृतियाँ:*\n${cartLines}\n\n` +
+    `*कुल देय राशि:* ₹${total.toLocaleString('en-IN')}\n` +
+    `*भुगतान माध्यम:* UPI / COD (सत्यापित)\n\n` +
+    `_कृपया पैकिंग व प्रेषण की पुष्टि करें।_`
+  );
+  
+  const waBtn = document.getElementById('btnShareOrderToArtisanWhatsApp');
+  if (waBtn) {
+    waBtn.onclick = () => {
+      window.open(`https://wa.me/919876543210?text=${waMsg}`, '_blank');
+    };
+  }
+  
+  // Clear cart
+  state.cart = [];
+  updateCartBadge();
+  showToast(isEn ? '🎉 Order Placed Successfully!' : '🎉 आपका ऑर्डर सफलतापूर्वक दर्ज हो गया!', 'success');
+}
+window.processPlaceOrder = processPlaceOrder;
+
+function sendCartToWhatsApp() {
+  if (state.cart.length === 0) return;
+  const cartLines = state.cart.map(i => `- ${i.title_en} (Qty: ${i.quantity}) - ₹${i.price * i.quantity}`).join('\n');
+  const total = state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const waMsg = encodeURIComponent(
+    `नमस्ते राधा देवी जी! मैं कला सेतु (kalaSetu) से निम्नलिखित हस्तशिल्प सीधे ऑर्डर करना चाहता हूँ:\n\n` +
+    `${cartLines}\n\n` +
+    `*कुल मूल्य:* ₹${total.toLocaleString('en-IN')}\n\n` +
+    `कृपया उपलब्धता व प्रेषण की जानकारी साझा करें। धन्यवाद!`
+  );
+  window.open(`https://wa.me/919876543210?text=${waMsg}`, '_blank');
+}
+window.sendCartToWhatsApp = sendCartToWhatsApp;
+
+function orderDirectWhatsApp(productId) {
+  const prod = state.products.find(p => p.id === productId);
+  if (!prod) return;
+  const title = prod.title_en;
+  const price = prod.price;
+  const waMsg = encodeURIComponent(
+    `नमस्ते राधा देवी जी! मुझे आपकी यह कलाकृति बेहद पसंद आई:\n\n` +
+    `🎨 *${title}*\n` +
+    `💰 *मूल्य:* ₹${price}\n\n` +
+    `कृपया इसकी प्रामाणिकता व डिलीवरी की जानकारी दें। धन्यवाद!`
+  );
+  window.open(`https://wa.me/919876543210?text=${waMsg}`, '_blank');
+}
+window.orderDirectWhatsApp = orderDirectWhatsApp;
+
+// ========================================================
+// 15. PRODUCT DETAIL INSPECTOR
+// ========================================================
+function openProductDetail(productId) {
+  const prod = state.products.find(p => p.id === productId);
+  if (!prod) return;
+  state.activeProductDetail = prod;
+  
+  const isEn = state.language === 'en';
+  const title = (isEn || !prod.title_hi) ? prod.title_en : prod.title_hi;
+  const story = (isEn || !prod.description_hi) ? prod.description_en : prod.description_hi;
+  const imgSrc = prod.enhanced_image_url || prod.raw_image_url || '/uploads/sample_enhanced_1.jpg';
+  const isPainting = (prod.category && prod.category.toLowerCase().includes('paint')) || (prod.title_en && prod.title_en.toLowerCase().includes('paint'));
+  const isHomeDecor = isPainting || (prod.category && (prod.category.toLowerCase().includes('cottage') || prod.category.toLowerCase().includes('pot')));
+  
+  document.getElementById('detailProductTitle').textContent = title;
+  document.getElementById('detailProductCategory').textContent = prod.category || 'Handicraft';
+  document.getElementById('detailMainImg').src = imgSrc;
+  document.getElementById('detailProductStory').textContent = story || (isEn ? 'Authentic handcrafted heritage craft.' : 'पारंपरिक हस्तनिर्मित भारतीय कलाकृति।');
+  
+  const matCost = prod.material_cost || 350;
+  const hours = prod.hours_spent || 6;
+  document.getElementById('detailMatCost').textContent = `₹${matCost}`;
+  document.getElementById('detailLaborCost').textContent = isEn ? `${hours} hrs (₹${hours * 75})` : `${hours} घंटे (₹${hours * 75})`;
+  document.getElementById('detailPriceDisplay').textContent = `₹${parseFloat(prod.price || 0).toLocaleString('en-IN')}`;
+  
+  const visBtn = document.getElementById('btnDetailWallPreview');
+  if (visBtn) {
+    visBtn.style.display = isHomeDecor ? 'block' : 'none';
+  }
+  
+  document.getElementById('productDetailModal')?.classList.remove('hidden');
+}
+window.openProductDetail = openProductDetail;
+
+function closeProductDetail() {
+  document.getElementById('productDetailModal')?.classList.add('hidden');
+}
+window.closeProductDetail = closeProductDetail;
+
+function triggerDetailWallPreview() {
+  if (!state.activeProductDetail) return;
+  closeProductDetail();
+  openWallVisualizer(
+    state.activeProductDetail.enhanced_image_url || state.activeProductDetail.raw_image_url,
+    state.activeProductDetail.title_en,
+    state.activeProductDetail.price
+  );
+}
+window.triggerDetailWallPreview = triggerDetailWallPreview;
+
+function triggerDetailCoa() {
+  if (!state.activeProductDetail) return;
+  closeProductDetail();
+  openCoaModal(state.activeProductDetail.id);
+}
+window.triggerDetailCoa = triggerDetailCoa;
+
+function addActiveDetailToCart() {
+  if (!state.activeProductDetail) return;
+  addToCart(state.activeProductDetail.id);
+  closeProductDetail();
+}
+window.addActiveDetailToCart = addActiveDetailToCart;
+
+function inquireActiveDetailWhatsApp() {
+  if (!state.activeProductDetail) return;
+  orderDirectWhatsApp(state.activeProductDetail.id);
+}
+window.inquireActiveDetailWhatsApp = inquireActiveDetailWhatsApp;
+
+// ========================================================
+// 16. ARTISAN STUDIO & WIZARD CONTROLLER
+// ========================================================
+function renderStudioInventory() {
+  const tbody = document.getElementById('studioInventoryTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+  
+  const isEn = state.language === 'en';
+  
+  const craftCnt = document.getElementById('studioCraftsCount');
+  if (craftCnt) craftCnt.textContent = state.products.length;
+  
+  let totalRevenue = 0;
+  state.products.forEach(p => totalRevenue += parseFloat(p.price || 0));
+  const earnCnt = document.getElementById('studioEarningsCount');
+  if (earnCnt) earnCnt.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
+  
+  state.products.forEach(p => {
+    const tr = document.createElement('tr');
+    const title = (isEn || !p.title_hi) ? p.title_en : p.title_hi;
+    const imgSrc = p.enhanced_image_url || p.raw_image_url || '/uploads/sample_enhanced_1.jpg';
+    const isPublished = p.status === 'published';
+    const statusLabel = isEn 
+      ? (isPublished ? 'Published' : 'Draft')
+      : (isPublished ? 'प्रकाशित' : 'ड्राफ्ट');
+    const statusClass = isPublished ? 'published' : 'draft';
+    
+    tr.innerHTML = `
+      <td>
+        <div class="inventory-craft-cell">
+          <img src="${imgSrc}" class="inventory-craft-thumb" onerror="this.src='/uploads/sample_enhanced_1.svg'" />
+          <div>
+            <strong class="inventory-craft-title">${title}</strong>
+            <div class="inventory-craft-code">ID: ${p.id}</div>
+          </div>
+        </div>
+      </td>
+      <td><strong>${p.category || 'Craft'}</strong></td>
+      <td>
+        <small style="color:#718096;">₹${p.material_cost || 350} mat. + ${p.hours_spent || 6}h labor</small>
+      </td>
+      <td>
+        <strong style="color:#C05621; font-size:15px;">₹${parseFloat(p.price || 0).toLocaleString('en-IN')}</strong>
+      </td>
+      <td>
+        <span class="badge-inv-status ${statusClass}">${statusLabel}</span>
+      </td>
+      <td>
+        <div class="inv-actions-row">
+          <button class="btn-inv-action" onclick="window.openProductDetail('${p.id}')">👁️ View</button>
+          <button class="btn-inv-action" onclick="window.openCoaModal('${p.id}')">📜 COA</button>
+          <button class="btn-inv-action" onclick="window.orderDirectWhatsApp('${p.id}')">💬 Share</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+window.renderStudioInventory = renderStudioInventory;
+
+function openStudioWizard() {
+  state.wizStep = 1;
+  advanceWizStep(1);
+  document.getElementById('studioWizardModal')?.classList.remove('hidden');
+}
+window.openStudioWizard = openStudioWizard;
+
+function closeStudioWizard() {
+  document.getElementById('studioWizardModal')?.classList.add('hidden');
+  if (state.webcamStream) {
+    state.webcamStream.getTracks().forEach(track => track.stop());
+    state.webcamStream = null;
+  }
+}
+window.closeStudioWizard = closeStudioWizard;
+
+function advanceWizStep(stepNum) {
+  state.wizStep = stepNum;
+  for (let i = 1; i <= 4; i++) {
+    const stepEl = document.getElementById(`wizStep${i}`);
+    const paneEl = document.getElementById(`wizPane${i}`);
+    if (stepEl) stepEl.classList.toggle('active', i === stepNum);
+    if (paneEl) paneEl.classList.toggle('active', i === stepNum);
+  }
+}
+window.advanceWizStep = advanceWizStep;
+
+function wizSelectCraft(craftKey) {
+  selectCraftSample(craftKey);
+  const sample = craftSamples[craftKey];
+  if (!sample) return;
+  
+  const preview = document.getElementById('wizSelectedImgPreview');
+  if (preview) preview.src = sample.raw;
+  
+  const rawImg = document.getElementById('wizImgRaw');
+  if (rawImg) rawImg.src = sample.raw;
+  const enhImg = document.getElementById('wizImgEnhanced');
+  if (enhImg) enhImg.src = sample.enhanced;
+  
+  const tHi = document.getElementById('wizTitleHi');
+  if (tHi) tHi.value = sample.catalog.title_hi;
+  const tEn = document.getElementById('wizTitleEn');
+  if (tEn) tEn.value = sample.catalog.title_en;
+  const dHi = document.getElementById('wizDescHi');
+  if (dHi) dHi.value = sample.catalog.description_hi;
+  const dEn = document.getElementById('wizDescEn');
+  if (dEn) dEn.value = sample.catalog.description_en;
+  
+  state.materialCost = sample.pricing.matCost;
+  state.hoursSpent = sample.pricing.hours;
+  state.calculatedPrice = sample.pricing.suggestedPrice;
+  
+  updateWizPricingDisplay();
+  showToast(`✨ Loaded preset: ${sample.catalog.title_en}`, 'info');
+}
+window.wizSelectCraft = wizSelectCraft;
+
+function loadCraftSampleAndOpen(craftKey) {
+  openStudioWizard();
+  wizSelectCraft(craftKey);
+}
+window.loadCraftSampleAndOpen = loadCraftSampleAndOpen;
+
+function handleWizFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    const preview = document.getElementById('wizSelectedImgPreview');
+    if (preview) preview.src = dataUrl;
+    const rawImg = document.getElementById('wizImgRaw');
+    if (rawImg) rawImg.src = dataUrl;
+    const enhImg = document.getElementById('wizImgEnhanced');
+    if (enhImg) enhImg.src = dataUrl;
+    showToast('📸 Custom image uploaded!', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+window.handleWizFileUpload = handleWizFileUpload;
+
+async function toggleDeviceWebcam() {
+  const video = document.getElementById('webcamVideo');
+  const previewBox = document.getElementById('cameraPreviewBox');
+  const btn = document.getElementById('btnToggleCamera');
+  
+  if (state.webcamStream) {
+    state.webcamStream.getTracks().forEach(t => t.stop());
+    state.webcamStream = null;
+    if (video) video.classList.add('hidden');
+    if (previewBox) previewBox.classList.remove('hidden');
+    if (btn) btn.innerHTML = '<span>📹 लाइव कैमरा ऑन करें</span>';
+    return;
+  }
+  
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    state.webcamStream = stream;
+    if (video) {
+      video.srcObject = stream;
+      video.classList.remove('hidden');
+    }
+    if (previewBox) previewBox.classList.add('hidden');
+    if (btn) btn.innerHTML = '<span>⏹️ कैमरा बंद करें</span>';
+  } catch (err) {
+    showToast('Camera permission denied or camera not accessible.', 'warning');
+  }
+}
+window.toggleDeviceWebcam = toggleDeviceWebcam;
+
+function updateWizCompareSlider(val) {
+  const compAfter = document.getElementById('wizCompAfter');
+  const line = document.getElementById('wizSliderDividerLine');
+  if (compAfter) compAfter.style.clipPath = `inset(0 0 0 ${val}%)`;
+  if (line) line.style.left = `${val}%`;
+}
+window.updateWizCompareSlider = updateWizCompareSlider;
+
+function toggleWizVoiceRecording() {
+  const btn = document.getElementById('btnWizBigMic');
+  const hint = document.getElementById('wizMicPromptText');
+  const pulseBox = document.getElementById('wizLiveTranscriptBox');
+  const transcriptText = document.getElementById('wizLiveTranscriptText');
+  
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast('Speech recognition not supported in this browser. Loading sample speech.', 'info');
+    document.getElementById('btnDemoVoice')?.click();
+    return;
+  }
+  
+  if (!window.wizRecognizer) {
+    window.wizRecognizer = new SpeechRecognition();
+    window.wizRecognizer.continuous = true;
+    window.wizRecognizer.interimResults = true;
+    window.wizRecognizer.lang = state.language === 'en' ? 'en-IN' : 'hi-IN';
+    
+    window.wizRecognizer.onresult = (e) => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; ++i) {
+        interim += e.results[i][0].transcript;
+      }
+      if (transcriptText) transcriptText.textContent = interim;
+    };
+    
+    window.wizRecognizer.onerror = () => {
+      stopWizVoiceRecording();
+    };
+  }
+  
+  if (btn.classList.contains('recording')) {
+    stopWizVoiceRecording();
+  } else {
+    btn.classList.add('recording');
+    if (pulseBox) pulseBox.classList.remove('hidden');
+    if (hint) hint.textContent = state.language === 'en' ? 'Listening... Speak clearly.' : 'सुन रहे हैं... बोलें।';
+    try { window.wizRecognizer.start(); } catch (e) {}
+  }
+}
+window.toggleWizVoiceRecording = toggleWizVoiceRecording;
+
+function stopWizVoiceRecording() {
+  const btn = document.getElementById('btnWizBigMic');
+  const hint = document.getElementById('wizMicPromptText');
+  const pulseBox = document.getElementById('wizLiveTranscriptBox');
+  if (btn) btn.classList.remove('recording');
+  if (pulseBox) pulseBox.classList.add('hidden');
+  if (hint) hint.textContent = state.language === 'en' ? 'Tap mic to speak' : 'बोलने के लिए माइक दबाएं';
+  try { if (window.wizRecognizer) window.wizRecognizer.stop(); } catch (e) {}
+}
+
+function playWizTts() {
+  const t = document.getElementById('wizDescHi')?.value || document.getElementById('wizDescEn')?.value;
+  if (!t || !window.speechSynthesis) return;
+  const utter = new SpeechSynthesisUtterance(t);
+  utter.lang = state.language === 'en' ? 'en-IN' : 'hi-IN';
+  window.speechSynthesis.speak(utter);
+  showToast('🔊 Playing audio description...', 'info');
+}
+window.playWizTts = playWizTts;
+
+function stepWizMat(delta) {
+  state.materialCost = Math.max(50, state.materialCost + delta);
+  recalcWizPricing();
+}
+window.stepWizMat = stepWizMat;
+
+function stepWizHours(delta) {
+  state.hoursSpent = Math.max(1, state.hoursSpent + delta);
+  recalcWizPricing();
+}
+window.stepWizHours = stepWizHours;
+
+function recalcWizPricing() {
+  const laborRate = 75; // ₹75/hr fair livelihood rate
+  const laborCost = state.hoursSpent * laborRate;
+  const craftMarkup = 150;
+  state.calculatedPrice = Math.round((state.materialCost + laborCost + craftMarkup) / 50) * 50;
+  updateWizPricingDisplay();
+}
+
+function updateWizPricingDisplay() {
+  const matEl = document.getElementById('wizValMaterialCost');
+  if (matEl) matEl.textContent = `₹${state.materialCost}`;
+  const hrEl = document.getElementById('wizValHoursSpent');
+  if (hrEl) hrEl.textContent = state.language === 'en' ? `${state.hoursSpent} hrs` : `${state.hoursSpent} घंटे`;
+  const priceEl = document.getElementById('wizDisplayPrice');
+  if (priceEl) priceEl.textContent = `₹${state.calculatedPrice.toLocaleString('en-IN')}`;
+  const sliderLbl = document.getElementById('wizSliderPriceLabel');
+  if (sliderLbl) sliderLbl.textContent = `₹${state.calculatedPrice.toLocaleString('en-IN')}`;
+  const slider = document.getElementById('wizPriceSlider');
+  if (slider) slider.value = state.calculatedPrice;
+  const justEl = document.getElementById('wizJustification');
+  if (justEl) {
+    justEl.textContent = state.language === 'en'
+      ? `Material cost (₹${state.materialCost}) + ${state.hoursSpent} hrs labor supports sustainable rural livelihood at ₹${state.calculatedPrice}.`
+      : `आपकी सामग्री लागत (₹${state.materialCost}) और ${state.hoursSpent} घंटे के श्रम के अनुसार ₹${state.calculatedPrice} उचित मूल्य है।`;
+  }
+}
+
+function updateWizPriceSlider(val) {
+  state.calculatedPrice = parseInt(val);
+  const sliderLbl = document.getElementById('wizSliderPriceLabel');
+  if (sliderLbl) sliderLbl.textContent = `₹${state.calculatedPrice.toLocaleString('en-IN')}`;
+  const priceEl = document.getElementById('wizDisplayPrice');
+  if (priceEl) priceEl.textContent = `₹${state.calculatedPrice.toLocaleString('en-IN')}`;
+}
+window.updateWizPriceSlider = updateWizPriceSlider;
+
+async function publishWizProduct() {
+  const titleHi = document.getElementById('wizTitleHi')?.value || 'हस्तनिर्मित शिल्प';
+  const titleEn = document.getElementById('wizTitleEn')?.value || 'Handmade Craft';
+  const descHi = document.getElementById('wizDescHi')?.value || '';
+  const descEn = document.getElementById('wizDescEn')?.value || '';
+  const rawUrl = document.getElementById('wizImgRaw')?.src || '/uploads/sample_raw_1.svg';
+  const enhancedUrl = document.getElementById('wizImgEnhanced')?.src || '/uploads/sample_enhanced_1.svg';
+  
+  const newProduct = {
+    title_en: titleEn,
+    title_hi: titleHi,
+    description_en: descEn,
+    description_hi: descHi,
+    raw_image_url: rawUrl,
+    enhanced_image_url: enhancedUrl,
+    price: state.calculatedPrice,
+    category: state.selectedCraft || 'Craft',
+    material_cost: state.materialCost,
+    hours_spent: state.hoursSpent,
+    status: 'published'
+  };
+  
+  try {
+    const res = await fetch(`${API_BASE}/products`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newProduct)
+    });
+    const data = await res.json();
+    if (data.success && data.product) {
+      state.products.unshift(data.product);
+    }
+  } catch (err) {
+    newProduct.id = `prod-${Date.now().toString().slice(-6)}`;
+    state.products.unshift(newProduct);
+  }
+  
+  closeStudioWizard();
+  renderProductsGrid();
+  renderMarketplace();
+  renderStudioInventory();
+  switchPortal('marketplace');
+  showToast(state.language === 'en' ? '🏪 Product Published to Live Catalog!' : '🏪 शिल्प कैटलॉग में प्रकाशित हुआ!', 'success');
+}
+window.publishWizProduct = publishWizProduct;
+
+function shareFullCatalogOnWhatsApp() {
+  const count = state.products.length;
+  const waMsg = encodeURIComponent(
+    `🙏 *नमस्ते! मैं राधा देवी (शिल्पी, वाराणसी)*\n\n` +
+    `कला सेतु (kalaSetu) पर मेरा डिजिटल शिल्प कैटलॉग अब लाइव है।\n` +
+    `कुल शिल्प: ${count} प्रामाणिक हस्तकला आइटम (जीआई प्रमाणित व फेयर-ट्रेड मूल्य)।\n\n` +
+    `🌐 *कैटलॉग देखें व ऑर्डर करें:* ${window.location.origin}/demo\n\n` +
+    `सीधे हस्तशिल्पियों का समर्थन करें!`
+  );
+  window.open(`https://wa.me/?text=${waMsg}`, '_blank');
+}
+window.shareFullCatalogOnWhatsApp = shareFullCatalogOnWhatsApp;
+
 // Initialize on page load
 loadProducts();
 setLanguage('hi');
+switchPortal('marketplace');
+
