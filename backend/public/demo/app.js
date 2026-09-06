@@ -1687,6 +1687,23 @@ function renderMarketplace() {
   const isEn = state.language === 'en';
   let list = [...state.products];
   
+  // Dynamically update category pill counts
+  const countAll = state.products.length;
+  const countTextiles = state.products.filter(p => (p.category && p.category.toLowerCase().includes('textil')) || (p.title_en && (p.title_en.toLowerCase().includes('saree') || p.title_en.toLowerCase().includes('dupatta') || p.title_en.toLowerCase().includes('silk')))).length;
+  const countPottery = state.products.filter(p => (p.category && p.category.toLowerCase().includes('pot')) || (p.title_en && (p.title_en.toLowerCase().includes('pot') || p.title_en.toLowerCase().includes('clay') || p.title_en.toLowerCase().includes('vase') || (p.title_hi && (p.title_hi.includes('मटका') || p.title_hi.includes('मिट्टी')))))).length;
+  const countPaintings = state.products.filter(p => (p.category && p.category.toLowerCase().includes('paint')) || (p.title_en && p.title_en.toLowerCase().includes('paint'))).length;
+  const countFiber = state.products.filter(p => (p.category && (p.category.toLowerCase().includes('fiber') || p.category.toLowerCase().includes('cottage'))) || (p.title_en && (p.title_en.toLowerCase().includes('mat') || p.title_en.toLowerCase().includes('basket') || p.title_en.toLowerCase().includes('sabai') || p.title_en.toLowerCase().includes('grass')))).length;
+  const countMetal = state.products.filter(p => (p.category && p.category.toLowerCase().includes('metal')) || (p.title_en && (p.title_en.toLowerCase().includes('dhokra') || p.title_en.toLowerCase().includes('brass') || p.title_en.toLowerCase().includes('metal')))).length;
+  const countWoodcraft = state.products.filter(p => (p.category && p.category.toLowerCase().includes('wood')) || (p.title_en && (p.title_en.toLowerCase().includes('wood') || p.title_en.toLowerCase().includes('carv')))).length;
+
+  if (document.getElementById('countPillAll')) document.getElementById('countPillAll').textContent = countAll;
+  if (document.getElementById('countPillTextiles')) document.getElementById('countPillTextiles').textContent = countTextiles;
+  if (document.getElementById('countPillPottery')) document.getElementById('countPillPottery').textContent = countPottery;
+  if (document.getElementById('countPillPaintings')) document.getElementById('countPillPaintings').textContent = countPaintings;
+  if (document.getElementById('countPillFiber')) document.getElementById('countPillFiber').textContent = countFiber;
+  if (document.getElementById('countPillMetal')) document.getElementById('countPillMetal').textContent = countMetal;
+  if (document.getElementById('countPillWoodcraft')) document.getElementById('countPillWoodcraft').textContent = countWoodcraft;
+
   // Category Filter
   if (state.activeCategory !== 'all') {
     const filter = state.activeCategory;
@@ -1700,6 +1717,10 @@ function renderMarketplace() {
       list = list.filter(p => (p.category && p.category.toLowerCase().includes('cottage')) || (p.title_en && (p.title_en.toLowerCase().includes('basket') || p.title_en.toLowerCase().includes('cottage') || p.title_en.toLowerCase().includes('sabai') || (p.title_hi && p.title_hi.includes('कुटीर')))));
     } else if (filter === 'textiles') {
       list = list.filter(p => (p.category && p.category.toLowerCase().includes('textil')) || (p.title_en && (p.title_en.toLowerCase().includes('saree') || p.title_en.toLowerCase().includes('dupatta') || p.title_en.toLowerCase().includes('silk'))));
+    } else if (filter === 'metal') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('metal')) || (p.title_en && (p.title_en.toLowerCase().includes('dhokra') || p.title_en.toLowerCase().includes('brass') || p.title_en.toLowerCase().includes('metal'))));
+    } else if (filter === 'woodcraft') {
+      list = list.filter(p => (p.category && p.category.toLowerCase().includes('wood')) || (p.title_en && (p.title_en.toLowerCase().includes('wood') || p.title_en.toLowerCase().includes('carv'))));
     }
   }
   
@@ -1707,7 +1728,7 @@ function renderMarketplace() {
   if (state.giOnly) {
     list = list.filter(p => {
       const t = ((p.title_en || '') + (p.category || '')).toLowerCase();
-      return t.includes('madhubani') || t.includes('banarasi') || t.includes('mithila') || t.includes('terracotta') || t.includes('sabai');
+      return t.includes('madhubani') || t.includes('banarasi') || t.includes('mithila') || t.includes('terracotta') || t.includes('sabai') || t.includes('dhokra');
     });
   }
   
@@ -1753,26 +1774,28 @@ function renderMarketplace() {
     const title = (isEn || !p.title_hi) ? p.title_en : p.title_hi;
     const imgSrc = p.enhanced_image_url || p.raw_image_url || '/uploads/sample_enhanced_1.jpg';
     const isPainting = (p.category && p.category.toLowerCase().includes('paint')) || (p.title_en && p.title_en.toLowerCase().includes('paint'));
-    const isHomeDecor = isPainting || (p.category && (p.category.toLowerCase().includes('cottage') || p.category.toLowerCase().includes('pot')));
+    const isHomeDecor = isPainting || (p.category && (p.category.toLowerCase().includes('cottage') || p.category.toLowerCase().includes('pot') || p.category.toLowerCase().includes('fiber')));
     const matCost = p.material_cost ? `₹${p.material_cost}` : '₹350';
     const hours = p.hours_spent ? `${p.hours_spent} hrs` : '6 hrs';
     const hoursText = isEn ? `${hours} labor` : `${p.hours_spent || 6} घंटे श्रम`;
     const matText = isEn ? `${matCost} raw mat.` : `${matCost} सामग्री`;
     
-    const quickViewText = isEn ? 'Quick View' : 'विस्तार देखें';
-    const addCartText = isEn ? 'Add to Cart' : 'कार्ट में जोड़ें';
-    const wallPreviewText = isEn ? '🖼️ Wall Preview' : '🖼️ वॉल प्रीव्यू';
-    const coaText = isEn ? '📜 Certificate' : '📜 प्रमाणपत्र';
-    const waText = isEn ? '💬 WhatsApp Order' : '💬 व्हाट्सएप ऑर्डर';
+    const quickTooltip = isEn ? 'Quick View' : 'विस्तार देखें';
+    const wallTooltip = isEn ? 'AR Living Room Preview' : 'कमरे में वॉल प्रीव्यू';
+    const coaTooltip = isEn ? 'Authenticity Certificate (COA)' : 'प्रामाणिकता प्रमाणपत्र';
+    const waTooltip = isEn ? 'Direct Artisan WhatsApp' : 'सीधा शिल्पी संवाद';
+    const addCartText = isEn ? 'Add to Cart' : 'झोली में जोड़ें';
     
     const wallBtn = isHomeDecor 
-      ? `<button class="btn-card-vis-sm" onclick="window.openWallVisualizer('${imgSrc}', '${p.title_en.replace(/'/g, "\\'")}', '${p.price}')">${wallPreviewText}</button>`
+      ? `<button class="btn-icon-secondary" data-tooltip="${wallTooltip}" onclick="window.openWallVisualizer('${imgSrc}', '${p.title_en.replace(/'/g, "\\'")}', '${p.price}')" aria-label="${wallTooltip}">🖼️</button>`
       : '';
-    const coaBtn = `<button class="btn-card-coa-sm" onclick="window.openCoaModal('${p.id}')">${coaText}</button>`;
+    const coaBtn = `<button class="btn-icon-secondary" data-tooltip="${coaTooltip}" onclick="window.openCoaModal('${p.id}')" aria-label="${coaTooltip}">📜</button>`;
+    const waBtn = `<button class="btn-icon-secondary btn-sec-wa" data-tooltip="${waTooltip}" onclick="window.orderDirectWhatsApp('${p.id}')" aria-label="${waTooltip}">💬</button>`;
+    const quickBtn = `<button class="btn-icon-secondary" data-tooltip="${quickTooltip}" onclick="window.openProductDetail('${p.id}')" aria-label="${quickTooltip}">👁️</button>`;
     
     card.innerHTML = `
       <div class="market-img-wrap" onclick="window.openProductDetail('${p.id}')">
-        <img src="${imgSrc}" alt="${title}" onerror="this.src='/uploads/sample_enhanced_1.svg'" />
+        <img src="${imgSrc}" alt="${title}" loading="lazy" onerror="this.src='/uploads/sample_enhanced_1.svg'" />
         <div class="market-badges-strip">
           <span class="badge-studio">✨ AI Studio</span>
           <span class="badge-gi">🏛️ GI Certified</span>
@@ -1793,14 +1816,17 @@ function renderMarketplace() {
           <span class="market-price-val">₹${parseFloat(p.price || 0).toLocaleString('en-IN')}</span>
           <span class="market-fair-badge">Fair Trade Verified</span>
         </div>
-        <div class="market-card-actions">
-          <button class="btn-card-quick" onclick="window.openProductDetail('${p.id}')">👁️ ${quickViewText}</button>
-          <button class="btn-card-cart" onclick="window.addToCart('${p.id}')">🛒 ${addCartText}</button>
-          <div class="market-full-actions">
+        <div class="card-action-bar">
+          <button class="btn-primary-add-cart" onclick="window.addToCart('${p.id}')">
+            <span>🛒</span>
+            <span>${addCartText}</span>
+          </button>
+          <div class="secondary-actions-cluster">
+            ${quickBtn}
             ${wallBtn}
             ${coaBtn}
+            ${waBtn}
           </div>
-          <button class="btn-card-wa-sm" onclick="window.orderDirectWhatsApp('${p.id}')">${waText}</button>
         </div>
       </div>
     `;
@@ -1819,16 +1845,46 @@ document.querySelectorAll('.category-pill').forEach(pill => {
   });
 });
 
-// Search input
+// Search input with Auto-Complete Dropdown
 const searchInput = document.getElementById('globalSearchInput');
 const clearSearchBtn = document.getElementById('btnClearSearch');
+const autocompleteBox = document.getElementById('searchAutocompleteBox');
+
 if (searchInput) {
   searchInput.addEventListener('input', (e) => {
     state.searchQuery = e.target.value.trim();
     if (clearSearchBtn) clearSearchBtn.classList.toggle('hidden', !state.searchQuery);
+    if (autocompleteBox && state.searchQuery.length > 0) {
+      autocompleteBox.classList.add('hidden');
+    }
     renderMarketplace();
   });
+
+  searchInput.addEventListener('focus', () => {
+    if (!state.searchQuery && autocompleteBox) {
+      autocompleteBox.classList.remove('hidden');
+    }
+  });
+
+  searchInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (autocompleteBox) autocompleteBox.classList.add('hidden');
+    }, 220);
+  });
 }
+
+// Wire Autocomplete item selection
+document.querySelectorAll('.ac-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const q = item.dataset.query || '';
+    if (searchInput) searchInput.value = q;
+    state.searchQuery = q;
+    if (clearSearchBtn) clearSearchBtn.classList.remove('hidden');
+    if (autocompleteBox) autocompleteBox.classList.add('hidden');
+    renderMarketplace();
+  });
+});
+
 if (clearSearchBtn) {
   clearSearchBtn.addEventListener('click', () => {
     if (searchInput) searchInput.value = '';
@@ -1871,6 +1927,14 @@ function addToCart(productId, qty = 1) {
   }
   
   updateCartBadge();
+
+  // Trigger Cart Bounce Micro-Animation
+  const btnCart = document.getElementById('btnOpenCart');
+  if (btnCart) {
+    btnCart.classList.add('cart-bounce');
+    setTimeout(() => btnCart.classList.remove('cart-bounce'), 650);
+  }
+
   const isEn = state.language === 'en';
   const name = isEn ? prod.title_en : (prod.title_hi || prod.title_en);
   showToast(isEn ? `🛒 Added "${name}" to your cart!` : `🛒 "${name}" कार्ट में जोड़ा गया!`, 'success');

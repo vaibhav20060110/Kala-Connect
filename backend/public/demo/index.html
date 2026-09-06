@@ -7,9 +7,9 @@
   <meta name="description" content="Empowering traditional Indian artisans with AI studio image enhancement, multilingual voice auto-cataloging, fair-trade dynamic pricing, AR wall visualizer, and cryptographic certificate of authenticity." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Noto+Serif+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Rozha+One&display=swap" rel="stylesheet">
   <link rel="manifest" href="/demo/manifest.json" />
-  <meta name="theme-color" content="#C05621" />
+  <meta name="theme-color" content="#B84218" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="kalaSetu" />
@@ -55,16 +55,37 @@
         </button>
       </nav>
 
-      <!-- Global Live Search Bar -->
-      <div class="nav-search-wrap">
+      <!-- Global Live Search Bar with Auto-Complete -->
+      <div class="nav-search-wrap" id="navSearchWrap">
         <span class="search-lens">🔍</span>
-        <input type="text" id="globalSearchInput" placeholder="शिल्प, कलाकार या सामग्री खोजें (Search pottery, silk, Madhubani)..." data-i18n-placeholder="search_placeholder" />
+        <input type="text" id="globalSearchInput" placeholder="शिल्प, कलाकार या सामग्री खोजें (Search pottery, silk, Madhubani)..." data-i18n-placeholder="search_placeholder" autocomplete="off" />
         <button class="search-clear-btn hidden" id="btnClearSearch" title="Clear">✕</button>
+        
+        <!-- Search Auto-Complete Dropdown -->
+        <div class="search-autocomplete-box hidden" id="searchAutocompleteBox">
+          <div class="ac-header">
+            <span data-i18n="ac_popular">🔥 लोकप्रिय खोजें (Popular Searches)</span>
+          </div>
+          <div class="ac-list" id="acList">
+            <div class="ac-item" data-query="Banarasi">🧵 बनारसी सिल्क दुपट्टा (Banarasi Silk)</div>
+            <div class="ac-item" data-query="Madhubani">🎨 मधुबनी पेंटिंग (Madhubani Folk Art)</div>
+            <div class="ac-item" data-query="Pottery">🏺 ब्लू पॉटरी व मटका (Terracotta & Blue Pottery)</div>
+            <div class="ac-item" data-query="Warli">🎨 वारली कला (Warli Tribal Art)</div>
+            <div class="ac-item" data-query="Dhokra">🔔 बस्तर ढोकरा शिल्प (Brass Dhokra Figurine)</div>
+            <div class="ac-item" data-query="Fiber">🌾 मादुर चटाई व सबाई टोकरी (River Grass & Cane)</div>
+          </div>
+        </div>
       </div>
 
       <!-- Right Utility Actions -->
       <div class="nav-actions-col">
         
+        <!-- Direct WhatsApp Quick-Connect -->
+        <a href="https://wa.me/919876543210?text=Namaste!%20I%20am%20exploring%20kalaSetu%20handicrafts%20and%20would%20like%20to%20connect%20with%20an%20artisan." target="_blank" class="btn-nav-wa" id="btnNavWhatsApp" title="Direct WhatsApp Concierge">
+          <span class="wa-icon">💬</span>
+          <span class="wa-text" data-i18n="nav_wa_chat">शिल्पी संवाद</span>
+        </a>
+
         <!-- 1-Tap PWA Install App Button -->
         <button class="btn-pwa-install hidden" id="btnPwaInstall" title="Install App to Device">
           <span class="pwa-icon">📲</span>
@@ -163,32 +184,43 @@
         </div>
       </section>
 
-      <!-- Category Filter Pills Bar -->
+      <!-- Category Filter Pills Bar with Live Badges -->
       <section class="craft-category-bar">
         <div class="category-pills-scroll">
           <button class="category-pill active" data-filter="all">
             <span class="cat-icon">🏷️</span>
             <span data-i18n="filter_all">सभी कलाकृतियाँ</span>
+            <span class="cat-count-pill" id="countPillAll">12</span>
+          </button>
+          <button class="category-pill" data-filter="textiles">
+            <span class="cat-icon">🧵</span>
+            <span data-i18n="filter_textiles">हथकरघा व रेशम</span>
+            <span class="cat-count-pill" id="countPillTextiles">3</span>
           </button>
           <button class="category-pill" data-filter="pottery">
             <span class="cat-icon">🏺</span>
-            <span data-i18n="filter_pottery">मिट्टी के बर्तन व मूर्तियाँ</span>
-          </button>
-          <button class="category-pill" data-filter="fiber">
-            <span class="cat-icon">🌾</span>
-            <span data-i18n="filter_fiber">मादुर चटाई व रेशे</span>
-          </button>
-          <button class="category-pill" data-filter="cottage">
-            <span class="cat-icon">🧺</span>
-            <span data-i18n="filter_cottage">कुटीर उद्योग व टोकरी</span>
+            <span data-i18n="filter_pottery">मिट्टी शिल्प व पात्र</span>
+            <span class="cat-count-pill" id="countPillPottery">3</span>
           </button>
           <button class="category-pill" data-filter="paintings">
             <span class="cat-icon">🎨</span>
             <span data-i18n="filter_paintings">पारंपरिक लोक चित्रकला</span>
+            <span class="cat-count-pill" id="countPillPaintings">2</span>
           </button>
-          <button class="category-pill" data-filter="textiles">
-            <span class="cat-icon">🧵</span>
-            <span data-i18n="filter_textiles">हथकरघा व बनारसी रेशम</span>
+          <button class="category-pill" data-filter="fiber">
+            <span class="cat-icon">🌾</span>
+            <span data-i18n="filter_fiber">प्राकृतिक रेशे व चटाई</span>
+            <span class="cat-count-pill" id="countPillFiber">2</span>
+          </button>
+          <button class="category-pill" data-filter="metal">
+            <span class="cat-icon">🔔</span>
+            <span data-i18n="filter_metal">ढोकरा व धातु शिल्प</span>
+            <span class="cat-count-pill" id="countPillMetal">1</span>
+          </button>
+          <button class="category-pill" data-filter="woodcraft">
+            <span class="cat-icon">🪵</span>
+            <span data-i18n="filter_woodcraft">नक्काशीदार काष्ठ कला</span>
+            <span class="cat-count-pill" id="countPillWoodcraft">1</span>
           </button>
         </div>
       </section>
@@ -216,7 +248,11 @@
       <!-- Main Marketplace Craft Grid -->
       <section class="marketplace-grid-section">
         <div class="marketplace-grid" id="marketplaceGrid">
-          <!-- Dynamically injected product cards -->
+          <!-- Initial Shimmer Skeletons (replaced dynamically on data load) -->
+          <div class="skeleton-card"><div class="skeleton-thumb shimmer"></div><div class="skeleton-body"><div class="skeleton-line shimmer" style="width:30%"></div><div class="skeleton-line shimmer" style="width:85%; height:20px;"></div><div class="skeleton-line shimmer" style="width:55%"></div><div class="skeleton-btn shimmer"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb shimmer"></div><div class="skeleton-body"><div class="skeleton-line shimmer" style="width:30%"></div><div class="skeleton-line shimmer" style="width:85%; height:20px;"></div><div class="skeleton-line shimmer" style="width:55%"></div><div class="skeleton-btn shimmer"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb shimmer"></div><div class="skeleton-body"><div class="skeleton-line shimmer" style="width:30%"></div><div class="skeleton-line shimmer" style="width:85%; height:20px;"></div><div class="skeleton-line shimmer" style="width:55%"></div><div class="skeleton-btn shimmer"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb shimmer"></div><div class="skeleton-body"><div class="skeleton-line shimmer" style="width:30%"></div><div class="skeleton-line shimmer" style="width:85%; height:20px;"></div><div class="skeleton-line shimmer" style="width:55%"></div><div class="skeleton-btn shimmer"></div></div></div>
         </div>
       </section>
 
