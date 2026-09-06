@@ -28,7 +28,8 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
     'Pottery',
     'Paintings',
     'Fiber',
-    'Cottage',
+    'Metal',
+    'Woodcraft',
   ];
 
   @override
@@ -49,13 +50,13 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
   }
 
   List<Product> get _filteredProducts {
-    return _products.filter((p) {
+    return _products.where((p) {
       if (_selectedCategory != 'all' && p.category.toLowerCase() != _selectedCategory.toLowerCase()) {
         return false;
       }
       if (_giOnly) {
         final t = '${p.titleEn} ${p.category}'.toLowerCase();
-        final isGi = t.contains('madhubani') || t.contains('banarasi') || t.contains('mithila') || t.contains('terracotta');
+        final isGi = t.contains('madhubani') || t.contains('banarasi') || t.contains('mithila') || t.contains('terracotta') || t.contains('dhokra') || t.contains('sabai');
         if (!isGi) return false;
       }
       if (_searchQuery.isNotEmpty) {
@@ -333,9 +334,20 @@ class _MarketplaceScreenState extends State<MarketplaceScreen> {
                                       child: Stack(
                                         fit: StackFit.expand,
                                         children: [
-                                          const Center(
-                                            child: Icon(Icons.palette_outlined, size: 48, color: KalaTheme.terracotta),
-                                          ),
+                                          if (prod.enhancedImageUrl.isNotEmpty || prod.rawImageUrl.isNotEmpty)
+                                            Image.network(
+                                              (prod.enhancedImageUrl.isNotEmpty ? prod.enhancedImageUrl : prod.rawImageUrl).startsWith('http')
+                                                  ? (prod.enhancedImageUrl.isNotEmpty ? prod.enhancedImageUrl : prod.rawImageUrl)
+                                                  : '${ApiService.baseUrl}${prod.enhancedImageUrl.isNotEmpty ? prod.enhancedImageUrl : prod.rawImageUrl}',
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (_, __, ___) => const Center(
+                                                child: Icon(Icons.palette_outlined, size: 48, color: KalaTheme.terracotta),
+                                              ),
+                                            )
+                                          else
+                                            const Center(
+                                              child: Icon(Icons.palette_outlined, size: 48, color: KalaTheme.terracotta),
+                                            ),
                                           Positioned(
                                             top: 8,
                                             right: 8,

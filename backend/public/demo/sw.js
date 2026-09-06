@@ -1,5 +1,5 @@
-// kalaSetu Service Worker - PWA & Offline Support
-const CACHE_NAME = 'kalasetu-v1.1';
+// kalaSetu Service Worker - PWA & Offline Support (v2.0)
+const CACHE_NAME = 'kalasetu-v2.0-live';
 const STATIC_ASSETS = [
   '/demo/',
   '/demo/index.html',
@@ -9,15 +9,14 @@ const STATIC_ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching offline assets for kalaSetu');
       return cache.addAll(STATIC_ASSETS).catch((err) => {
         console.warn('[SW] Pre-cache warning:', err);
       });
     })
   );
-  self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
@@ -26,33 +25,22 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames
           .filter((name) => name !== CACHE_NAME)
-          .map((name) => caches.delete(name))
+          .map((name) => {
+            console.log('[SW] Purging stale cache:', name);
+            return caches.delete(name);
+          })
       );
-    })
+    }).then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
+// Network First strategy: Always try network first so UI changes show up immediately!
 self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
+  if (event.request.method !== 'GET') return;
 
-  // For API calls or dynamic routes, use Network First with timeout
-  if (requestUrl.pathname.startsWith('/products') ||
-      requestUrl.pathname.startsWith('/orders') ||
-      requestUrl.pathname.startsWith('/ai') ||
-      requestUrl.pathname.startsWith('/auth')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match(event.request);
-      })
-    );
-    return;
-  }
-
-  // For static demo app assets, use Stale While Revalidate
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request).then((networkResponse) => {
+    fetch(event.request)
+      .then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -60,9 +48,8 @@ self.addEventListener('fetch', (event) => {
           });
         }
         return networkResponse;
-      }).catch(() => cachedResponse);
-
-      return cachedResponse || fetchPromise;
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
+

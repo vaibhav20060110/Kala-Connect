@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class KalaTheme {
-  // Traditional Indian Craft Color Palette
-  static const Color terracotta = Color(0xFFC05621); // Rich baked clay
-  static const Color terracottaDark = Color(0xFF9C4215);
-  static const Color turmericGold = Color(0xFFD69E2E); // Auspicious warm gold
-  static const Color deepIndigo = Color(0xFF1A202C); // Night indigo
-  static const Color warmCream = Color(0xFFFBF9F5); // Khadi handmade paper
+  // Traditional Indian Craft Authentic Heritage Color Palette
+  static const Color terracotta = Color(0xFFB84218); // Authentic natural fired clay
+  static const Color terracottaDark = Color(0xFF8C3010);
+  static const Color turmericGold = Color(0xFFD97706); // Warm saffron/turmeric
+  static const Color deepIndigo = Color(0xFF1E293B); // Deep slate indigo
+  static const Color warmCream = Color(0xFFFAF7F2); // Sand canvas
   static const Color cardSurface = Color(0xFFFFFFFF);
   static const Color borderSubtle = Color(0xFFE2E8F0);
-  static const Color forestGreen = Color(0xFF276749); // Success / Fair price
-  static const Color amberOrange = Color(0xFFDD6B20);
+  static const Color forestGreen = Color(0xFF15803D); // Fair-trade livelihood
+  static const Color amberOrange = Color(0xFFF59E0B);
 
   static ThemeData get lightTheme {
     return ThemeData(

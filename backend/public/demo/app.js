@@ -2636,7 +2636,10 @@ window.shareFullCatalogOnWhatsApp = shareFullCatalogOnWhatsApp;
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/demo/sw.js')
-      .then(reg => console.log('[PWA] Service Worker active:', reg.scope))
+      .then(reg => {
+        reg.update();
+        console.log('[PWA] Service Worker updated & active:', reg.scope);
+      })
       .catch(err => console.warn('[PWA] SW register warning:', err));
   });
 }
