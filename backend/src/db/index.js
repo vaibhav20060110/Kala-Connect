@@ -25,7 +25,8 @@ let inMemoryStore = {
   artisans: [],
   products: [],
   price_suggestions: [],
-  comparables: []
+  comparables: [],
+  orders: []
 };
 
 // Load saved store if available
@@ -412,6 +413,58 @@ export async function query(sql, params = []) {
     inMemoryStore.price_suggestions.push(suggestion);
     persistStore();
     return { rows: [suggestion], rowCount: 1 };
+  }
+
+  // SELECT from orders
+  if (lower.includes('from orders')) {
+    let rows = [...(inMemoryStore.orders || [])];
+    if (lower.includes('where artisan_id = $1')) {
+      rows = rows.filter(o => o.artisan_id === params[0]);
+    } else if (lower.includes('where customer_phone = $1')) {
+      rows = rows.filter(o => o.customer_phone === params[0]);
+    } else if (lower.includes('where id = $1')) {
+      rows = rows.filter(o => o.id === params[0]);
+    }
+    rows.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    return { rows, rowCount: rows.length };
+  }
+
+  // INSERT INTO orders
+  if (lower.startsWith('insert into orders')) {
+    const order = {
+      id: params[0],
+      artisan_id: params[1],
+      customer_name: params[2],
+      customer_phone: params[3],
+      customer_address: params[4],
+      items: typeof params[5] === 'string' ? JSON.parse(params[5]) : (params[5] || []),
+      total_amount: parseFloat(params[6] || 0),
+      payment_method: params[7] || 'upi',
+      status: params[8] || 'confirmed',
+      notes: params[9] || '',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    if (!inMemoryStore.orders) inMemoryStore.orders = [];
+    inMemoryStore.orders.unshift(order);
+    persistStore();
+    return { rows: [order], rowCount: 1 };
+  }
+
+  // UPDATE orders
+  if (lower.startsWith('update orders')) {
+    if (!inMemoryStore.orders) inMemoryStore.orders = [];
+    const id = params[params.length - 1];
+    const index = inMemoryStore.orders.findIndex(o => o.id === id);
+    if (index !== -1) {
+      if (lower.includes('status = $1')) {
+        inMemoryStore.orders[index].status = params[0];
+      }
+      inMemoryStore.orders[index].updated_at = new Date().toISOString();
+      persistStore();
+      return { rows: [inMemoryStore.orders[index]], rowCount: 1 };
+    }
+    return { rows: [], rowCount: 0 };
   }
 
   // Default fallback

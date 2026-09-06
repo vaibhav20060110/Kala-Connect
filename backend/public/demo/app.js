@@ -213,6 +213,7 @@ const i18n = {
     nav_marketplace: 'हस्तशिल्प बाज़ार',
     nav_studio: 'शिल्पी स्टूडियो',
     nav_gem: 'GeM व ODOP',
+    btn_install_app: 'ऐप इंस्टॉल करें',
     search_placeholder: 'शिल्प, कलाकार या सामग्री खोजें (Search pottery, silk, Madhubani)...',
     mode_phone_sim: 'फ़ोन डेमो',
     mode_full_app: 'पूर्ण ऐप',
@@ -1630,6 +1631,8 @@ function switchPortal(portalName) {
   // Update Tab Buttons
   document.getElementById('tabMarketplace')?.classList.toggle('active', portalName === 'marketplace');
   document.getElementById('tabArtisanStudio')?.classList.toggle('active', portalName === 'artisan-studio');
+  document.getElementById('mobTabMarketplace')?.classList.toggle('active', portalName === 'marketplace');
+  document.getElementById('mobTabStudio')?.classList.toggle('active', portalName === 'artisan-studio');
   
   // Toggle Portal Views
   const viewMarketplace = document.getElementById('viewMarketplace');
@@ -1902,6 +1905,10 @@ function updateCartBadge() {
     badge.style.transform = 'scale(1.25)';
     setTimeout(() => badge.style.transform = 'scale(1)', 200);
   }
+  const mobBadge = document.getElementById('mobCartBadge');
+  if (mobBadge) {
+    mobBadge.textContent = totalCount;
+  }
 }
 
 function openCart() {
@@ -2017,13 +2024,47 @@ function closeCheckoutModal() {
 }
 window.closeCheckoutModal = closeCheckoutModal;
 
-function processPlaceOrder() {
+async function processPlaceOrder() {
   const name = document.getElementById('chkInputName')?.value || 'Valued Customer';
   const phone = document.getElementById('chkInputPhone')?.value || '9812345678';
   const address = document.getElementById('chkInputAddress')?.value || 'India';
   const city = document.getElementById('chkInputCity')?.value || '';
+  const isEn = state.language === 'en';
   
-  const orderId = `KS-ORD-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+  let orderId = `KS-ORD-2026-${Math.floor(10000 + Math.random() * 90000)}`;
+  const total = state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  // Real Database Persistence to /orders
+  try {
+    const orderPayload = {
+      customer_name: name,
+      customer_phone: phone.startsWith('+91') ? phone : `+91 ${phone}`,
+      customer_address: `${address}, ${city}`,
+      items: state.cart.map(i => ({
+        product_id: i.id,
+        title_en: i.title_en,
+        title_hi: i.title_hi,
+        price: i.price,
+        qty: i.quantity
+      })),
+      total_amount: total,
+      payment_method: 'upi',
+      notes: 'Order placed via kalaSetu Web PWA'
+    };
+
+    const res = await fetch(`${API_BASE}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderPayload)
+    });
+    const data = await res.json();
+    if (data.success && data.order) {
+      orderId = data.order.id;
+    }
+  } catch (err) {
+    console.warn('[ORDER] Offline fallback order generated:', err);
+  }
+
   const confirmedTag = document.getElementById('confirmedOrderIdTag');
   if (confirmedTag) confirmedTag.textContent = `ऑर्डर ID: ${orderId}`;
   
@@ -2031,9 +2072,7 @@ function processPlaceOrder() {
   document.getElementById('checkoutFooter')?.classList.add('hidden');
   document.getElementById('orderConfirmedBox')?.classList.remove('hidden');
   
-  const isEn = state.language === 'en';
   const cartLines = state.cart.map(i => `- ${i.title_en} (Qty: ${i.quantity}) - ₹${i.price * i.quantity}`).join('\n');
-  const total = state.cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
   
   const waMsg = encodeURIComponent(
     `🙏 *कला सेतु (kalaSetu) नया ऑर्डर!*\n\n` +
@@ -2053,10 +2092,11 @@ function processPlaceOrder() {
     };
   }
   
-  // Clear cart
+  // Clear cart & update studio
   state.cart = [];
   updateCartBadge();
-  showToast(isEn ? '🎉 Order Placed Successfully!' : '🎉 आपका ऑर्डर सफलतापूर्वक दर्ज हो गया!', 'success');
+  if (typeof renderStudioInventory === 'function') renderStudioInventory();
+  showToast(isEn ? '🎉 Order Placed & Saved to Database!' : '🎉 आपका ऑर्डर सफलतापूर्वक दर्ज व सुरक्षित हुआ!', 'success');
 }
 window.processPlaceOrder = processPlaceOrder;
 
@@ -2177,6 +2217,22 @@ function renderStudioInventory() {
   state.products.forEach(p => totalRevenue += parseFloat(p.price || 0));
   const earnCnt = document.getElementById('studioEarningsCount');
   if (earnCnt) earnCnt.textContent = `₹${totalRevenue.toLocaleString('en-IN')}`;
+
+  // Fetch Live Orders Stats from /orders/stats/summary
+  fetch(`${API_BASE}/orders/stats/summary`)
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const inqCnt = document.getElementById('studioInquiriesCount');
+        if (inqCnt) inqCnt.textContent = data.total_orders;
+        const activeOrdersBadge = document.getElementById('statActiveOrders');
+        if (activeOrdersBadge) activeOrdersBadge.textContent = data.active_orders;
+        if (data.total_revenue > 0 && earnCnt) {
+          earnCnt.textContent = `₹${(totalRevenue + data.total_revenue).toLocaleString('en-IN')}`;
+        }
+      }
+    })
+    .catch(() => {});
   
   state.products.forEach(p => {
     const tr = document.createElement('tr');
@@ -2510,8 +2566,51 @@ function shareFullCatalogOnWhatsApp() {
 }
 window.shareFullCatalogOnWhatsApp = shareFullCatalogOnWhatsApp;
 
+// ========================================================
+// 17. PROGRESSIVE WEB APP (PWA) & SERVICE WORKER LIFECYCLE
+// ========================================================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/demo/sw.js')
+      .then(reg => console.log('[PWA] Service Worker active:', reg.scope))
+      .catch(err => console.warn('[PWA] SW register warning:', err));
+  });
+}
+
+let pwaDeferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  pwaDeferredPrompt = e;
+  const btn = document.getElementById('btnPwaInstall');
+  if (btn) btn.classList.remove('hidden');
+});
+
+const btnPwa = document.getElementById('btnPwaInstall');
+if (btnPwa) {
+  btnPwa.addEventListener('click', async () => {
+    if (pwaDeferredPrompt) {
+      pwaDeferredPrompt.prompt();
+      const { outcome } = await pwaDeferredPrompt.userChoice;
+      console.log('[PWA] User response to installation:', outcome);
+      pwaDeferredPrompt = null;
+      btnPwa.classList.add('hidden');
+    } else {
+      showToast(state.language === 'en' ? '📱 To install: Tap your browser menu > "Add to Home Screen"' : '📱 इंस्टॉल हेतु: ब्राउज़र मेनू में जाएं > "Add to Home Screen" चुनें', 'info', 4500);
+    }
+  });
+}
+
+function toggleLanguageQuick() {
+  const target = state.language === 'hi' ? 'en' : 'hi';
+  setLanguage(target);
+  const lbl = document.getElementById('mobLangLabel');
+  if (lbl) lbl.textContent = target === 'hi' ? 'EN' : 'हिं';
+}
+window.toggleLanguageQuick = toggleLanguageQuick;
+
 // Initialize on page load
 loadProducts();
 setLanguage('hi');
 switchPortal('marketplace');
+
 

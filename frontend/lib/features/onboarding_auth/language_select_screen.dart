@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/localization.dart';
 import '../../core/theme.dart';
+import '../marketplace/marketplace_screen.dart';
 import 'phone_otp_screen.dart';
 
 class LanguageSelectScreen extends StatelessWidget {
@@ -101,8 +102,14 @@ class LanguageSelectScreen extends StatelessWidget {
 
               const Spacer(),
 
-              // Proceed Button
+              // Primary Artisan Studio Entry
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: KalaTheme.terracotta,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -112,16 +119,44 @@ class LanguageSelectScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    const Text('🎨 ', style: TextStyle(fontSize: 20)),
                     Text(
-                      loc.isHindi ? 'आगे बढ़ें' : 'Continue',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      loc.isHindi ? 'कारीगर स्टूडियो (Artisan Studio)' : 'Artisan Studio',
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 8),
-                    const Icon(Icons.arrow_forward_rounded, size: 24),
+                    const Icon(Icons.arrow_forward_rounded, size: 20),
                   ],
                 ),
               ),
               const SizedBox(height: 12),
+
+              // Buyer Marketplace Entry
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: KalaTheme.deepIndigo,
+                  side: const BorderSide(color: KalaTheme.terracotta, width: 1.5),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MarketplaceScreen()),
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('🛍️ ', style: TextStyle(fontSize: 20)),
+                    Text(
+                      loc.isHindi ? 'कला बाज़ार देखें (Browse Marketplace)' : 'Browse Marketplace',
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),

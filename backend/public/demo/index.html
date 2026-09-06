@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="manifest" href="/demo/manifest.json" />
+  <meta name="theme-color" content="#C05621" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="kalaSetu" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body class="mode-full-app">
@@ -60,6 +65,12 @@
       <!-- Right Utility Actions -->
       <div class="nav-actions-col">
         
+        <!-- 1-Tap PWA Install App Button -->
+        <button class="btn-pwa-install hidden" id="btnPwaInstall" title="Install App to Device">
+          <span class="pwa-icon">📲</span>
+          <span class="pwa-text" data-i18n="btn_install_app">ऐप इंस्टॉल करें</span>
+        </button>
+
         <!-- View Mode Switcher (Full App vs Phone Simulator) -->
         <button class="btn-mode-toggle" id="btnToggleViewMode" title="Switch between Full Web App and Phone Simulator Mode">
           <span class="mode-icon" id="modeIcon">📱</span>
@@ -1578,6 +1589,33 @@
       </div>
     </div>
   </div>
+
+  <!-- ========================================================
+       MOBILE BOTTOM NAVIGATION (Touch-First PWA Bar)
+       ======================================================== -->
+  <nav class="mobile-bottom-nav" id="mobileBottomNav">
+    <button class="mob-nav-item active" id="mobTabMarketplace" onclick="window.switchPortal('marketplace')">
+      <span class="mob-icon">🛍️</span>
+      <span class="mob-label" data-i18n="nav_marketplace">बाज़ार</span>
+    </button>
+    <button class="mob-nav-item" id="mobTabStudio" onclick="window.switchPortal('artisan-studio')">
+      <span class="mob-icon">⚒️</span>
+      <span class="mob-label" data-i18n="nav_studio">स्टूडियो</span>
+    </button>
+    <button class="mob-nav-item mob-cart-item" id="mobOpenCart" onclick="window.openCart()">
+      <span class="mob-icon">🛒</span>
+      <span class="mob-label" data-i18n="cart_title">कार्ट</span>
+      <span class="mob-cart-badge" id="mobCartBadge">0</span>
+    </button>
+    <button class="mob-nav-item" id="mobToggleLang" onclick="window.toggleLanguageQuick()">
+      <span class="mob-icon">🌐</span>
+      <span class="mob-label" id="mobLangLabel">EN</span>
+    </button>
+    <button class="mob-nav-item" id="mobToggleMode" onclick="window.toggleViewMode()">
+      <span class="mob-icon" id="mobModeIcon">📱</span>
+      <span class="mob-label" id="mobModeLabel">फ़ोन</span>
+    </button>
+  </nav>
 
   <script src="app.js"></script>
 </body>

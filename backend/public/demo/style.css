@@ -3857,3 +3857,115 @@ body.mode-phone-sim .main-app-container {
   }
 }
 
+/* ==========================================================
+   PWA INSTALL BUTTON & MOBILE BOTTOM NAVIGATION
+   ========================================================== */
+
+.btn-pwa-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #C05621 0%, #DD6B20 100%);
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(192, 86, 33, 0.3);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btn-pwa-install:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(192, 86, 33, 0.4);
+}
+
+.btn-pwa-install.hidden {
+  display: none !important;
+}
+
+/* Mobile Bottom Navigation (Visible on screen < 768px) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(253, 251, 247, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(226, 232, 240, 0.9);
+  z-index: 1000;
+  padding: 4px 10px;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.mob-nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: #718096;
+  font-size: 11px;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.2s ease;
+  min-width: 54px;
+}
+
+.mob-nav-item .mob-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.mob-nav-item.active {
+  color: #C05621;
+  background: rgba(192, 86, 33, 0.08);
+}
+
+.mob-nav-item.active .mob-label {
+  color: #C05621;
+  font-weight: 800;
+}
+
+.mob-cart-badge {
+  position: absolute;
+  top: 2px;
+  right: 12px;
+  background: #E53E3E;
+  color: #FFFFFF;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  border-radius: 9999px;
+  padding: 0 4px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  .main-app-container {
+    padding-bottom: 84px;
+  }
+  .nav-portal-tabs {
+    display: none; /* Replaced by bottom nav on mobile */
+  }
+}
+
+

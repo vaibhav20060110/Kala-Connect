@@ -58,3 +58,19 @@ CREATE TABLE IF NOT EXISTS comparables (
   typical_margin_percent NUMERIC(5, 2) NOT NULL,
   market_notes TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  artisan_id TEXT REFERENCES artisans(id) ON DELETE SET NULL,
+  customer_name VARCHAR(128) NOT NULL,
+  customer_phone VARCHAR(32) NOT NULL,
+  customer_address TEXT,
+  items JSONB NOT NULL DEFAULT '[]'::jsonb,
+  total_amount NUMERIC(10, 2) NOT NULL DEFAULT 0,
+  payment_method VARCHAR(32) DEFAULT 'upi', -- 'upi', 'cod', 'card'
+  status VARCHAR(32) DEFAULT 'confirmed', -- 'confirmed', 'dispatched', 'delivered'
+  notes TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+

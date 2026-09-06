@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.routes.js';
 import productRoutes from './routes/product.routes.js';
 import aiRoutes from './routes/ai.routes.js';
+import orderRoutes from './routes/order.routes.js';
 import { getDbStatus } from './db/index.js';
 import { getAiStatus } from './services/geminiService.js';
 
@@ -41,6 +42,7 @@ app.get('/health', (req, res) => {
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/ai', aiRoutes);
+app.use('/orders', orderRoutes);
 
 // Root redirect to demo
 app.get('/', (req, res) => {

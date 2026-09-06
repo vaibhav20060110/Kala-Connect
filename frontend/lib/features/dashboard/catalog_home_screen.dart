@@ -5,6 +5,7 @@ import '../../core/theme.dart';
 import '../../core/api_service.dart';
 import '../../models/product.dart';
 import '../camera_enhancer/camera_screen.dart';
+import '../marketplace/marketplace_screen.dart';
 import 'gem_sync_modal.dart';
 
 class CatalogHomeScreen extends StatefulWidget {
@@ -62,6 +63,17 @@ class _CatalogHomeScreenState extends State<CatalogHomeScreen> {
           ],
         ),
         actions: [
+          // Switch to Buyer Marketplace
+          TextButton.icon(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const MarketplaceScreen()));
+            },
+            icon: const Text('🛍️', style: TextStyle(fontSize: 16)),
+            label: const Text(
+              'बाज़ार',
+              style: TextStyle(fontWeight: FontWeight.bold, color: KalaTheme.terracotta),
+            ),
+          ),
           // GeM Portal Shortcut
           TextButton.icon(
             onPressed: _showGeMModal,
