@@ -10,7 +10,7 @@
     "test:db": "node src/scripts/test-db.js",
     "test:gemini": "node src/scripts/test-gemini.js",
     "check": "node src/scripts/check-status.js",
-    "tunnel": "ssh -o StrictHostKeyChecking=no -R 80:localhost:5000 nokey@localhost.run"
+    "tunnel": "ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=3 -R 80:localhost:5000 nokey@localhost.run"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.0",
